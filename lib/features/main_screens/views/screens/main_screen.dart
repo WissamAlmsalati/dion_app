@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../home_screen/view/home_screen.dart';
 import '../../../loaning_feature/views/loaning_screen.dart';
-import '../../../loans_list/views/loans_list.dart';
+import '../../../loans_list/views/loans_screen.dart';
 import '../../viewmodel/screen_bloc.dart';
 
 class MainScreen extends StatelessWidget {

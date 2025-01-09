@@ -90,7 +90,8 @@ class _LoaningScreenState extends State<LoaningScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height:MediaQuery.of(context).size.height * 0.02),
+
                         CustomTextField(
                           controller: _phoneNumberController,
                           labelText: 'رقم الهاتف',
@@ -102,8 +103,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 16),
-                        CustomTextField(
+                        SizedBox(height:MediaQuery.of(context).size.height * 0.02),                        CustomTextField(
                           controller: _amountController,
                           labelText: 'المبلغ',
                           keyboardType: TextInputType.number,
@@ -114,8 +114,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 16),
-                        CustomTextField(
+                        SizedBox(height:MediaQuery.of(context).size.height * 0.02),                        CustomTextField(
                           controller: _notesController,
                           labelText: 'ملاحظات',
                           validator: (value) {
@@ -125,8 +124,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 16),
-                        SizedBox(
+                        SizedBox(height:MediaQuery.of(context).size.height * 0.02),                        SizedBox(
                           height: MediaQuery.of(context).size.height * 0.06,
                           width: double.infinity,
 

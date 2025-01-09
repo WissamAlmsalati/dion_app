@@ -111,14 +111,11 @@ Future<void> _onSendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
         emit(SignUpSuccess(message: "Registration Successful!"));
         emit(Authenticated(token: token));
       } else {
-        // Handle non-200 responses
         try {
-          // Attempt to parse the response as JSON
           final responseData = json.decode(response.body);
           final errorMessage = responseData['title'] ?? "Failed to register: ${response.reasonPhrase}";
           emit(AuthError(message: errorMessage));
         } catch (e) {
-          // If parsing fails, treat the response as plain text
           final errorMessage = response.body;
           emit(AuthError(message: errorMessage));
         }

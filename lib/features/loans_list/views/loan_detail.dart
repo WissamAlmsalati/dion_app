@@ -15,15 +15,30 @@ class LoanDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LoanStatusBloc(),
-      child: BlocListener<SettleLoanBloc, SettleLoanState>(
-        listener: (context, state) {
-          if (state is SettleLoanSuccess) {
-            context.read<LoanBloc>().add(const LoadLoans());
-            Navigator.pop(context, true); // Pass true to indicate success
-          }
-        },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => LoanStatusBloc()),
+        BlocProvider(create: (context) => SettleLoanBloc(settlingRepository: SettlingRepository(authService: AuthService()))),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<SettleLoanBloc, SettleLoanState>(
+            listener: (context, state) {
+              if (state is SettleLoanSuccess) {
+                context.read<LoanBloc>().add(const LoadLoans());
+                Navigator.pop(context, true); // Pass true to indicate success
+              }
+            },
+          ),
+          BlocListener<LoanStatusBloc, LoanStatusState>(
+            listener: (context, state) {
+              if (state is LoanStatusSuccess) {
+                context.read<LoanBloc>().add(const LoadLoans());
+                Navigator.pop(context, true); // Pass true to indicate success
+              }
+            },
+          ),
+        ],
         child: Scaffold(
           appBar: AppBar(
             title: Text(

@@ -6,13 +6,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+   LoginScreen({super.key});
+
+  final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final _phoneController = TextEditingController();
-    final _passwordController = TextEditingController();
-    final _formKey = GlobalKey<FormState>();
+
 
     return Scaffold(
       appBar: AppBar(
@@ -24,65 +26,76 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              CustomTextField(
-                controller: _phoneController,
-                labelText: 'رقم الهاتف',
-                hintText: '910000000',
-                prefixIcon: Icons.phone,
-                keyboardType: TextInputType.phone,
-                validator: _validatePhoneNumber,
-              ),
-              CustomTextField(
-                controller: _passwordController,
-                labelText: 'كلمة المرور',
-                hintText: 'أدخل كلمة المرور',
-                prefixIcon: Icons.lock,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
-                validator: _validatePassword,
-              ),
-              const SizedBox(height: 20),
-              BlocConsumer<AuthenticationBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is Authenticated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تم تسجيل الدخول بنجاح!')),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CustomTextField(
+                  controller: _phoneController,
+                  labelText: 'رقم الهاتف',
+                  hintText: '910000000',
+                  prefixIcon: Icons.phone,
+                  keyboardType: TextInputType.phone,
+                  validator: _validatePhoneNumber,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                CustomTextField(
+                  controller: _passwordController,
+                  labelText: 'كلمة المرور',
+                  hintText: 'أدخل كلمة المرور',
+                  prefixIcon: Icons.lock,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                  validator: _validatePassword,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                BlocConsumer<AuthenticationBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is Authenticated) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('تم تسجيل الدخول بنجاح!')),
+                      );
+                      context.go('/main_screen');
+                    } else if (state is AuthError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
+                      );
+                      print(state.message);
+                    }
+                  },
+                  builder: (context, state) {
+                    return CustomButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _onLoginPressed(context, _phoneController, _passwordController);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('يرجى إدخال تفاصيل صحيحة')),
+                          );
+                        }
+                      },
+                      text: "تسجيل الدخول",
+                      isLoading: state is AuthLoading,
                     );
-                    context.go('/main_screen');
-                  } else if (state is AuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
-                    print(state.message);
-                  }
-                },
-                builder: (context, state) {
-                  return CustomButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _onLoginPressed(context, _phoneController, _passwordController);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('يرجى إدخال تفاصيل صحيحة')),
-                        );
-                      }
-                    },
-                    text: "تسجيل الدخول",
-                    isLoading: state is AuthLoading,
-                  );
-                },
-              ),
-              Text('ليس لديك حساب؟'),
-
-            ],
-
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                GestureDetector(
+                  onTap: () {
+                    context.push('/');
+                  },
+                  child: const Text(
+                    'ليس لديك حساب؟',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -100,7 +113,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   void _onLoginPressed(BuildContext context, TextEditingController phoneController, TextEditingController passwordController) {
-    final phoneNumber = '0' + phoneController.text;
+    final phoneNumber = phoneController.text;
     final password = passwordController.text;
     context.read<AuthenticationBloc>().add(LoginEvent(
         phoneNumber: phoneNumber, password: password));

@@ -16,11 +16,11 @@ class User {
   // Factory method to create a User from JSON
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      password: json['password'],
-      fcmToken: json['fcmToken'],
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      password: json['password'] ?? '',
+      fcmToken: json['fcmToken'] ?? '',
     );
   }
 
