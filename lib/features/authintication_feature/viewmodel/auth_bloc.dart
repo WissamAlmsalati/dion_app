@@ -14,11 +14,10 @@ part 'auth_state.dart';
 
 class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
   final FlutterSecureStorage _storage = FlutterSecureStorage(); // Secure storage instance
-  final AuthService authService;
-
+  final AuthService authService = AuthService();
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  AuthenticationBloc({required this.authService}) : super(AuthInitial()) {
+  AuthenticationBloc() : super(AuthInitial()) {
     on<AppStarted>(_onAppStarted);
     on<LoginEvent>(_onLogin);
     on<LogoutEvent>(_onLogout);
@@ -106,7 +105,7 @@ Future<void> _onSendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
         final responseData = json.decode(response.body);
         final token = responseData['token'];
 
-        await _storage.write(key: 'auth_token', value: token);
+        await _storage.write(key: 'AuthToken', value: token);
 
         emit(SignUpSuccess(message: "Registration Successful!"));
         emit(Authenticated(token: token));
@@ -141,13 +140,13 @@ Future<void> _onSendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
       print(response.statusCode);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        final token = responseData['authToken'];
+        final token = responseData['AuthToken'];
         print(
             "Token: $token");
         final expiresAt = responseData['expiresAt'];
 
         // Store the token and expiration date securely
-        await _storage.write(key: 'auth_token', value: token);
+        await _storage.write(key: 'AuthToken', value: token);
         await _storage.write(key: 'expires_at', value: expiresAt);
 
         emit(Authenticated(token: token));
@@ -167,7 +166,6 @@ Future<void> _onSendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
     }catch(e){
       emit(LogOutError(message: "Error: ${e.toString()}"));
       print(e);
-
     }
 
   }

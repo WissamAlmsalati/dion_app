@@ -28,23 +28,41 @@ class MainScreen extends StatelessWidget {
           ];
 
           return Scaffold(
-            body: screens[currentIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: currentIndex,
-              onTap: (index) {
-                try {
-                  context.read<NavigationBloc>().add(NavigateToScreen(index));
-                } catch (e) {
-                  if (kDebugMode) {
-                    print(e);
+            backgroundColor: Colors.white,
+            body: IndexedStack(
+              index: currentIndex,
+              children: screens,
+            ),
+            bottomNavigationBar: Container(
+
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 10,
+                    offset: const Offset(0, -1),
+                  ),
+                ],
+              ),
+              child: BottomNavigationBar(
+                currentIndex: currentIndex,
+                onTap: (index) {
+                  try {
+                    context.read<NavigationBloc>().add(NavigateToScreen(index));
+                  } catch (e) {
+                    if (kDebugMode) {
+                      print(e);
+                    }
                   }
-                }
-              },
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-                BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
-              ],
+                },
+                items: const [
+                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
+                  BottomNavigationBarItem(icon: Icon(Icons.add), label: "انشاء قرض"),
+                  BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'القروض'),
+                ],
+              ),
             ),
           );
         },

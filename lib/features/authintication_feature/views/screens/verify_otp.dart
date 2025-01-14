@@ -9,7 +9,7 @@ class OtpScreen extends StatelessWidget {
   final String phoneNumber;
   final TextEditingController _otpController = TextEditingController();
 
-  OtpScreen({Key? key, required this.phoneNumber}) : super(key: key);
+  OtpScreen({super.key, required this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {

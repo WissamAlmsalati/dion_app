@@ -30,6 +30,7 @@ class VerifyPhoneNumber extends StatelessWidget {
                   prefixIcon: Icons.phone,
                   keyboardType: TextInputType.phone,
                   validator: _validatePhoneNumber,
+
                 ),
                 const SizedBox(height: 20),
                 BlocListener<AuthenticationBloc, AuthState>(

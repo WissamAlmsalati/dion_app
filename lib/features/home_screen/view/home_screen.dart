@@ -77,7 +77,8 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             '"اهلا "اسم المستخدم"',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppTheme.defaultFontColor,
+
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -85,8 +86,9 @@ class HomeScreen extends StatelessWidget {
                           Text(
                             'الديون المستحقة',
                             style: TextStyle(
-                              color: Colors.white,
                               fontSize: 24,
+                              color: AppTheme.defaultFontColor,
+
                               fontWeight: FontWeight.bold,
                             ),
                           ),

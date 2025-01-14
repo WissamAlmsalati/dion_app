@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../models/loan.dart';
 import '../../viewmodel/get_list_loan/get_list_of_loans_bloc.dart';
 import '../loan_detail.dart';
@@ -21,23 +23,23 @@ class LoanListItem extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
-          backgroundColor: Colors.blue.shade100,
+          backgroundColor: AppTheme.mainColor.withOpacity(0.1),
           child: Icon(
             Icons.monetization_on,
-            color: Colors.blue.shade800,
+            color: AppTheme.mainColor,
           ),
         ),
         title: Text(
           loan.deptName,
-          style: const TextStyle(
+          style: GoogleFonts.changa(
             fontWeight: FontWeight.bold,
             fontSize: 18,
-            color: Colors.blue,
+            color: AppTheme.mainColor,
           ),
         ),
         subtitle: Text(
           'القيمة: ${loan.amount.toStringAsFixed(2)}\د.ل',
-          style: TextStyle(
+          style: GoogleFonts.changa(
             fontSize: 14,
             color: Colors.grey.shade700,
           ),

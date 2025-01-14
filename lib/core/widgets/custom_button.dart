@@ -10,7 +10,7 @@ class CustomButton extends StatelessWidget {
   final bool isLoading;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.text,
     this.backgroundColor,
@@ -18,13 +18,13 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width ?? double.infinity, // Default to full width
-      height: height ?? 50, // Default height
+      width: width ?? double.infinity,
+      height: height ?? 50,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -40,8 +40,10 @@ class CustomButton extends StatelessWidget {
               )
             : Text(
                 text,
+
                 style: const TextStyle(
                   fontSize: 16,
+                  color: Color(0xFF033525),
                   fontWeight: FontWeight.bold,
                 ),
               ),

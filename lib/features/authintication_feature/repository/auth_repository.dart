@@ -27,11 +27,12 @@ class AuthRepository {
       body: json.encode({'phoneNumber': phoneNumber, 'otpCode': otp}),
     );
 
+
     print('OTP Verification Response Code: ${response.statusCode}');
+
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
-      print('OTP Verification Response: $responseBody');
       return responseBody;
     } else {
       throw Exception('Invalid OTP: ${response.reasonPhrase}');
@@ -45,7 +46,7 @@ class AuthRepository {
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'phone_number': phoneNumber, 'otp': otp}),
     );
-
+print("Auth Code: ${response.statusCode}");
     print('Login Response: ${response.body}');
     print('Login Response Code: ${response.statusCode}');
     print(otp);

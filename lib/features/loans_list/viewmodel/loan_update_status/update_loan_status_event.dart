@@ -1,17 +1,21 @@
 part of 'update_loan_status_bloc.dart';
 
 
-abstract class LoanStatusEvent extends Equatable {
+
+@immutable
+abstract class UpdateLoanStatusEvent extends Equatable {
+  const UpdateLoanStatusEvent();
+
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
-class UpdateLoanStatus extends LoanStatusEvent {
+class UpdateLoanStatus extends UpdateLoanStatusEvent {
   final int loanId;
   final int loanStatus;
 
-  UpdateLoanStatus({required this.loanId, required this.loanStatus});
+  const UpdateLoanStatus({required this.loanId, required this.loanStatus});
 
   @override
-  List<Object?> get props => [loanId, loanStatus];
+  List<Object> get props => [loanId, loanStatus];
 }

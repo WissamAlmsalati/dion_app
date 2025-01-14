@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../authintication_feature/services/auth_service.dart';
 import '../../settling_feature/reposittory/settling_reposotory.dart';
 import '../../settling_feature/viewmodel/settle_loan_bloc.dart';
 import '../models/loan.dart';
+import '../repostry/accept_loan_repository.dart';
 import '../viewmodel/get_list_loan/get_list_of_loans_bloc.dart';
 import '../viewmodel/loan_update_status/update_loan_status_bloc.dart';
 
@@ -15,30 +15,15 @@ class LoanDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => LoanStatusBloc()),
-        BlocProvider(create: (context) => SettleLoanBloc(settlingRepository: SettlingRepository(authService: AuthService()))),
-      ],
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<SettleLoanBloc, SettleLoanState>(
-            listener: (context, state) {
-              if (state is SettleLoanSuccess) {
-                context.read<LoanBloc>().add(const LoadLoans());
-                Navigator.pop(context, true); // Pass true to indicate success
-              }
-            },
-          ),
-          BlocListener<LoanStatusBloc, LoanStatusState>(
-            listener: (context, state) {
-              if (state is LoanStatusSuccess) {
-                context.read<LoanBloc>().add(const LoadLoans());
-                Navigator.pop(context, true); // Pass true to indicate success
-              }
-            },
-          ),
-        ],
+    return BlocProvider(
+      create: (context) => LoanStatusBloc(acceptLoanRepository: AcceptLoanRepository()),
+      child: BlocListener<SettleLoanBloc, SettleLoanState>(
+        listener: (context, state) {
+          if (state is SettleLoanSuccess) {
+            context.read<LoanBloc>().add(const LoadLoans());
+            Navigator.pop(context, true); // Pass true to indicate success
+          }
+        },
         child: Scaffold(
           appBar: AppBar(
             title: Text(
@@ -73,14 +58,23 @@ class LoanDetailScreen extends StatelessWidget {
                     loan.loanStatus == 0
                         ? "في انتظار القبول"
                         : loan.loanStatus == 1
-                            ? "تم قبول القرض"
-                            : loan.loanStatus == 2
-                                ? "تم رفض القرض"
-                                : "تم التسوية",
+                        ? "تم قبول القرض"
+                        : loan.loanStatus == 2
+                        ? "تم رفض القرض"
+                        : "تم التسوية",
                   ),
                   const SizedBox(height: 20),
                   BlocBuilder<LoanStatusBloc, LoanStatusState>(
                     builder: (context, state) {
+                      if (state is LoanStatusSuccess) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _showMessageDialog(context, state.message);
+                        });
+                      } else if (state is LoanStatusFailure) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _showMessageDialog(context, state.error);
+                        });
+                      }
                       return Row(
                         children: [
                           if (loan.creditor != null &&
@@ -133,24 +127,6 @@ class LoanDetailScreen extends StatelessWidget {
                             const CircularProgressIndicator(
                               color: Colors.blue,
                             ),
-                          ] else if (state is LoanStatusSuccess && loan.loanStatus == 1) ...[
-                            const Text(
-                              'تم قبول القرض بنجاح!',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ] else if (state is LoanStatusSuccess && loan.loanStatus == 2) ...[
-                            const Text(
-                              'تم رفض القرض بنجاح!',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                           ] else if (loan.creditor == null && loan.loanStatus == 1) ...[
                             BlocBuilder<SettleLoanBloc, SettleLoanState>(
                               builder: (context, state) {
@@ -199,7 +175,7 @@ class LoanDetailScreen extends StatelessWidget {
   Widget _buildDetailItem(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -209,7 +185,7 @@ class LoanDetailScreen extends StatelessWidget {
               color: Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(width: 10),
           Text(
             value,
             style: const TextStyle(
@@ -221,109 +197,129 @@ class LoanDetailScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-void _showSettleDialog(BuildContext context, int loanId, double maxAmount, VoidCallback onSettleSuccess) {
-  final TextEditingController amountController = TextEditingController();
-  String? errorMessage;
+  void _showMessageDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('رسالة'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('موافق'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return BlocProvider.value(
-        value: BlocProvider.of<SettleLoanBloc>(context),
-        child: BlocListener<SettleLoanBloc, SettleLoanState>(
-          listener: (context, state) {
-            if (state is SettleLoanSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('تمت تسوية القرض بنجاح!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              onSettleSuccess(); // Call the callback to refresh the data
-              Navigator.pop(context, true); // Close dialog on success and pass result
-            } else if (state is SettleLoanFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('فشل في تسوية القرض: ${state.error}'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return AlertDialog(
-                title: const Text('تسوية القرض'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+  void _showSettleDialog(BuildContext context, int loanId, double maxAmount, VoidCallback onSettleSuccess) {
+    final TextEditingController amountController = TextEditingController();
+    String? errorMessage;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return BlocProvider.value(
+          value: BlocProvider.of<SettleLoanBloc>(context),
+          child: BlocListener<SettleLoanBloc, SettleLoanState>(
+            listener: (context, state) {
+              if (state is SettleLoanSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('تمت تسوية القرض بنجاح!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+                onSettleSuccess(); // Call the callback to refresh the data
+                Navigator.pop(context, true); // Close dialog on success and pass result
+              } else if (state is SettleLoanFailure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('فشل في تسوية القرض: ${state.error}'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text('تسوية القرض'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      BlocBuilder<SettleLoanBloc, SettleLoanState>(
+                        builder: (context, state) {
+                          if (state is SettleLoanLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                              ),
+                            );
+                          }
+                          return TextField(
+                            controller: amountController,
+                            decoration: InputDecoration(
+                              hintText: 'أدخل المبلغ',
+                              errorText: errorMessage,
+                            ),
+                            keyboardType: TextInputType.number,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  actions: [
                     BlocBuilder<SettleLoanBloc, SettleLoanState>(
                       builder: (context, state) {
                         if (state is SettleLoanLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.blue,
-                            ),
-                          );
+                          return const SizedBox.shrink(); // Hide buttons when loading
                         }
-                        return TextField(
-                          controller: amountController,
-                          decoration: InputDecoration(
-                            hintText: 'أدخل المبلغ',
-                            errorText: errorMessage,
-                          ),
-                          keyboardType: TextInputType.number,
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context); // Close dialog without action
+                              },
+                              child: const Text('إلغاء'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                final amount = double.tryParse(amountController.text) ?? 0.0;
+                                if (amount > 0 && amount <= maxAmount) {
+                                  context.read<SettleLoanBloc>().add(
+                                      SettleLoan(loanId: loanId, amount: amount));
+                                } else {
+                                  setState(() {
+                                    errorMessage = 'القيمة المتبقية من الدين هي ${maxAmount.toStringAsFixed(2)}';
+                                  });
+                                }
+                              },
+                              child: const Text('تسوية'),
+                            ),
+                          ],
                         );
                       },
                     ),
                   ],
-                ),
-                actions: [
-                  BlocBuilder<SettleLoanBloc, SettleLoanState>(
-                    builder: (context, state) {
-                      if (state is SettleLoanLoading) {
-                        return const SizedBox.shrink(); // Hide buttons when loading
-                      }
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // Close dialog without action
-                            },
-                            child: const Text('إلغاء'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              final amount = double.tryParse(amountController.text) ?? 0.0;
-                              if (amount > 0 && amount <= maxAmount) {
-                                context.read<SettleLoanBloc>().add(
-                                    SettleLoan(loanId: loanId, amount: amount));
-                              } else {
-                                setState(() {
-                                  errorMessage = 'القيمة المتبقية من الدين هي ${maxAmount.toStringAsFixed(2)}';
-                                });
-                              }
-                            },
-                            child: const Text('تسوية'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      );
-    },
-  ).then((result) {
-    if (result == true) {
-      // Refresh the screen when dialog closes with success
-      onSettleSuccess();
-    }
-  });
+        );
+      },
+    ).then((result) {
+      if (result == true) {
+        // Refresh the screen when dialog closes with success
+        onSettleSuccess();
+      }
+    });
+  }
 }

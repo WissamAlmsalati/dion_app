@@ -1,19 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import '../../authintication_feature/services/auth_service.dart';
 
 class AcceptLoanRepository {
   static const String apiUrl = 'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/Loaning/UpdateLoanStatus';
   final AuthService authService = AuthService();
 
-
-
-
-
-   Future<void> updateLoanStatus(int loanId, int loanStatus) async {
-
-
+  Future<String> updateLoanStatus(int loanId, int loanStatus) async {
     final token = await authService.getToken();
 
     final response = await http.post(
@@ -21,18 +14,28 @@ class AcceptLoanRepository {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
-
       },
       body: json.encode({
         'loanId': loanId,
         'loanStatus': loanStatus,
       }),
     );
+
+    print(loanId);
+    print("token is $token");
     print(response.body);
     print(response.statusCode);
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to update loan status');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final responseBody = json.decode(response.body);
+      return responseBody['message']; // Return the success message from the backend
+    } else {
+      final responseBody = json.decode(response.body);
+      if (responseBody is Map && responseBody.containsKey('message')) {
+        return Future.error(responseBody['message']); // Return the error message from the backend
+      } else {
+        return Future.error('Failed to update loan status');
+      }
     }
   }
 }

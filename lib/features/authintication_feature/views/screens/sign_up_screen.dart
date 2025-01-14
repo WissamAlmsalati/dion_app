@@ -24,7 +24,6 @@ class SignUpScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) {
         return AuthenticationBloc(
-          authService: AuthService(),
         );
       },
       child: Scaffold(

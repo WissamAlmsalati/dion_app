@@ -6,22 +6,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
-   LoginScreen({super.key});
+  LoginScreen({super.key});
 
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-   final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'تسجيل الدخول',
           style: TextStyle(
-            color: Colors.white,
             fontSize: 24,
           ),
         ),
@@ -62,10 +59,24 @@ class LoginScreen extends StatelessWidget {
                       );
                       context.go('/main_screen');
                     } else if (state is AuthError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
+                      // Show the error message in a dialog
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('خطأ'),
+                            content: Text(state.message), // The error message
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Close the dialog
+                                },
+                                child: const Text('إغلاق'),
+                              ),
+                            ],
+                          );
+                        },
                       );
-                      print(state.message);
                     }
                   },
                   builder: (context, state) {
