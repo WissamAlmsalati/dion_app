@@ -8,6 +8,7 @@ import '../repository/auth_repository.dart';
 import '../services/auth_service.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
@@ -25,7 +26,7 @@ class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
-    emit(AuthChecking()); // New state to indicate loading at startup
+    emit(AuthChecking());
     try {
       final token = await authService.getToken();
       if (token != null) {
@@ -42,9 +43,16 @@ class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final responseData = await authRepository.sendOtp(event.phoneNumber);
-      final otp = responseData['otp'];
+
+      final otp = responseData['otpId'];
       final expiresAt = responseData['expiresAt'];
+
+      if (otp == null || expiresAt == null) {
+        throw Exception("Invalid response from server: otp or expiresAt is missing");
+      }
+
       emit(OtpSent(otp: otp, expiresAt: expiresAt));
+
     } on SocketException {
       emit(ConnectionError(message: "No internet connection"));
     } catch (e) {

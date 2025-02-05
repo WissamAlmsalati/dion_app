@@ -1,3 +1,4 @@
+import 'package:dion_app/features/profile_feature/presentatioon/screens/profile_screen.dart';
 import 'package:dion_app/features/reset_password/presentation/screens/phone_number_screen.dart';
 import 'package:dion_app/features/reset_password/presentation/screens/reset_password_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -61,14 +62,20 @@ class AppRouter {
       GoRoute(
         path: "/reset_pass_phone_screen",
         builder: (context, state) {
-          return  PhoneNumberScreen();
+          return PhoneNumberScreen();
         },
       ),
       GoRoute(
         path: "/reset_pass_otp_screen",
         builder: (context, state) {
-          return ResetPasswordScreen(
-         );
+          return ResetPasswordScreen();
+        },
+      ),
+      // Note the leading slash below.
+      GoRoute(
+        path: '/profile_screen',
+        builder: (context, state) {
+          return ProfileScreen();
         },
       ),
     ],

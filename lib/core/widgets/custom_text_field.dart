@@ -10,11 +10,13 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final int? maxLines;
   final int? minLines;
-  final String? Function(String?)? validator; // Validator function
+  final String? Function(String?)? validator;
   final Function(String)? onChanged;
   final double? height;
   final double? width;
   final double? borderRadius;
+  final Widget? suffixIcon;
+  final String? type; // This will be used to determine maxLength
 
   const CustomTextField({
     super.key,
@@ -31,30 +33,18 @@ class CustomTextField extends StatelessWidget {
     this.height,
     this.width,
     this.borderRadius,
+    this.suffixIcon,
+    this.type,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Determine if the prefix icon should be a phone icon or +218
-    Widget? getPrefixIcon() {
-      if (keyboardType == TextInputType.phone) {
-        // Check if the controller text is empty or not
-        if (controller.text.isEmpty) {
-          return Text(
-            '+218',
-            style: TextStyle(fontSize: 16, color: theme.primaryColor),
-          );
-        } else {
-          return Icon(prefixIcon ?? Icons.phone); // Default phone icon
-        }
-      }
-      return null; // Default case when not phone input type
-    }
+    int maxLength = _setMaxLength(type);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 9.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -70,24 +60,30 @@ class CustomTextField extends StatelessWidget {
               obscureText: obscureText,
               maxLines: maxLines ?? 1,
               minLines: minLines ?? 1,
-              maxLength: maxLines != null ? 144 : null,
+              maxLength: maxLength,
               decoration: InputDecoration(
                 labelText: labelText,
                 hintText: hintText,
-                prefixIcon: getPrefixIcon(), // Use dynamic prefixIcon
+                prefixIcon: keyboardType == TextInputType.phone
+                    ? (controller.text.isEmpty
+                    ? Text(
+                  '+218',
+                  style: TextStyle(
+                      fontSize: 16, color: theme.primaryColor),
+                )
+                    : Icon(prefixIcon ?? Icons.phone))
+                    : null,
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 12.0),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
                   borderSide: BorderSide(
-                    color: theme.inputDecorationTheme.enabledBorder?.borderSide
-                        .color ??
+                    color: theme.inputDecorationTheme.enabledBorder?.borderSide.color ??
                         Colors.grey,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 12.0),
+                  borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
                   borderSide: BorderSide(
-                    color: theme.inputDecorationTheme.focusedBorder?.borderSide
-                        .color ??
+                    color: theme.inputDecorationTheme.focusedBorder?.borderSide.color ??
                         Colors.blue,
                     width: 2.0,
                   ),
@@ -102,6 +98,9 @@ class CustomTextField extends StatelessWidget {
                 ),
                 labelStyle: theme.inputDecorationTheme.labelStyle,
                 hintStyle: theme.inputDecorationTheme.hintStyle,
+                suffixIcon: suffixIcon, // Use the passed suffixIcon for password visibility toggle
+                // Hide the counter under the TextField
+                counterText: '',  // This hides the counter text
               ),
               keyboardType: keyboardType,
               validator: validator,
@@ -111,5 +110,20 @@ class CustomTextField extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  int _setMaxLength(String? value) {
+    switch (value) {
+      case 'name':
+        return 30;
+      case 'password':
+        return 8;
+      case 'otp':
+        return 6;
+      case 'phone':
+        return 9;
+      default:
+        return 50;
+    }
   }
 }

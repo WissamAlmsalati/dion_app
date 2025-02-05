@@ -9,8 +9,8 @@ class Loan {
   final DateTime dueDate;
   final String notes;
   final DateTime updatedAt;
-  final int loanStatus;
-  final int loanType; // Change from String to int
+  final String loanStatus; // Changed from int to String
+  final int loanType; 
   final User? creditor;
   final User? debtor;
 
@@ -38,13 +38,13 @@ class Loan {
       phoneNumber: json['phoneNumber'] ?? '',
       creditorId: json['creditorId'] ?? 0,
       debtorId: json['debtorId'] ?? 0,
-      amount: json['amount'] ?? 0.0,
-      refundAmount: json['refundAmount'] ?? 0.0,
-      dueDate: DateTime.parse(json['dueDate']) ?? DateTime.now(),
+      amount: (json['amount'] ?? 0).toDouble(),
+      refundAmount: (json['refundAmount'] ?? 0).toDouble(),
+      dueDate: DateTime.parse(json['dueDate']),
       notes: json['notes'] ?? '',
-      updatedAt: DateTime.parse(json['updatedAt']) ?? DateTime.now(),
-      loanStatus: json['loanStatus'] ?? 0,
-      loanType: json['loanType'] ?? 0, // Change from String to int
+      updatedAt: DateTime.parse(json['updatedAt']),
+      loanStatus: json['loanStatus'] ?? '',
+      loanType: json['loanType'] ?? 0,
       creditor: json['creditor'] != null ? User.fromJson(json['creditor']) : null,
       debtor: json['debtor'] != null ? User.fromJson(json['debtor']) : null,
     );

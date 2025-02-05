@@ -1,10 +1,10 @@
+// app_theme.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color mainColor = Color(0xFFFB847C);
   static const Color defaultFontColor = Color(0xFFEFF5FE); // Default font color
-  static const Color bottomNavBackgroundColor = Color(0xFFE0E0E0); // Custom color for the Bottom Navigation Bar
   static const Color textColor = Color(0xFF011A51);
 
   static ThemeData get purpleTheme {
@@ -14,11 +14,11 @@ class AppTheme {
         primary: mainColor,
         secondary: Colors.white,
       ),
-      useMaterial3: true, // Enable Material 3 design
-      scaffoldBackgroundColor:defaultFontColor ,
+      useMaterial3: true,
+      scaffoldBackgroundColor: defaultFontColor,
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: mainColor,
+        backgroundColor: defaultFontColor,
         elevation: 0,
         titleTextStyle: GoogleFonts.titilliumWeb(
           color: textColor,
@@ -43,7 +43,7 @@ class AppTheme {
         ),
       ),
       buttonTheme: ButtonThemeData(
-        buttonColor: mainColor,
+        buttonColor: Colors.white,
         textTheme: ButtonTextTheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -51,32 +51,34 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white, // Text color
-          backgroundColor: mainColor, // Button color
+          foregroundColor: Colors.white,
+          backgroundColor: mainColor,
           textStyle: GoogleFonts.titilliumWeb(
             fontSize: 16,
             color: textColor,
             fontWeight: FontWeight.bold,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Rounded corners
+            borderRadius: BorderRadius.circular(12),
           ),
-          elevation: 4, // Shadow elevation
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14), // Padding inside the button
+          elevation: 4,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: defaultFontColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: mainColor), // Default border color
+          borderRadius: BorderRadius.circular(1),
+          borderSide: BorderSide(color: textColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: mainColor), // Unfocused border
+          borderRadius: BorderRadius.circular(1),
+          borderSide: BorderSide(color: textColor.withOpacity(0.5), width: 2),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: mainColor, width: 2), // Focused border
+          borderRadius: BorderRadius.circular(1),
+          borderSide: BorderSide(color: mainColor, width: 2),
         ),
         labelStyle: GoogleFonts.titilliumWeb(
           color: textColor,
@@ -88,9 +90,9 @@ class AppTheme {
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: mainColor, // Custom background color for Bottom Navigation Bar
-        selectedItemColor: defaultFontColor, // Color for the selected item
-        unselectedItemColor: defaultFontColor.withOpacity(0.6), // Color for unselected items
+        backgroundColor: Colors.white,
+        selectedItemColor: mainColor,
+        unselectedItemColor: textColor,
         selectedLabelStyle: GoogleFonts.titilliumWeb(
           fontSize: 14,
           fontWeight: FontWeight.bold,
@@ -98,25 +100,8 @@ class AppTheme {
         unselectedLabelStyle: GoogleFonts.titilliumWeb(
           fontSize: 12,
         ),
-        showUnselectedLabels: true, // Show labels for unselected items
+        showUnselectedLabels: true,
       ),
-    );
-  }
-
-  static AppBar defaultAppBar(String title, {List<Widget>? actions}) {
-    return AppBar(
-      title: Text(
-        title,
-        style: GoogleFonts.titilliumWeb(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      actions: actions,
-      backgroundColor: mainColor,
-      elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
     );
   }
 }

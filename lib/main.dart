@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Authentication App',
         theme: AppTheme.purpleTheme,
         routerConfig: AppRouter.router,

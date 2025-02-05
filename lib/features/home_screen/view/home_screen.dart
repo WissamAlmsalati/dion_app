@@ -19,9 +19,13 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text('ديون'),
           centerTitle: true,
+          leading: IconButton(onPressed: (){
+            context.push("/profile_screen");
+
+          }, icon: Icon(Icons.person,color: AppTheme.textColor,)),
           actions: [
             IconButton(
-              icon: const Icon(Icons.logout),
+              icon: const Icon(Icons.logout,color: AppTheme.textColor,),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -69,46 +73,33 @@ class HomeScreen extends StatelessWidget {
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.zero,
                     children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        decoration: BoxDecoration(
-                          color: AppTheme.mainColor,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(30),
-                            bottomRight: Radius.circular(30),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '"اهلا "اسم المستخدم"',
+                            style: TextStyle(
+                              color: AppTheme.textColor,
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.fontSize,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '"اهلا "اسم المستخدم"',
-                              style: TextStyle(
-                                color: AppTheme.defaultFontColor,
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          Text(
+                            'الديون المستحقة',
+                            style: TextStyle(
+                              color: AppTheme.textColor,
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.fontSize,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              'الديون المستحقة',
-                              style: TextStyle(
-                                color: AppTheme.defaultFontColor,
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02),
