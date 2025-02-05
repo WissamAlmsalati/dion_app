@@ -24,11 +24,14 @@ class LoanListScreen extends StatelessWidget {
       body: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => LoanBloc(loanRepository: LoanRepository(authService: AuthService()))
+            create: (_) => LoanBloc(
+                loanRepository: LoanRepository(authService: AuthService()))
               ..add(const LoadLoans()),
           ),
           BlocProvider(
-            create: (_) => SettleLoanBloc(settlingRepository: SettlingRepository(authService: AuthService())),
+            create: (_) => SettleLoanBloc(
+                settlingRepository:
+                    SettlingRepository(authService: AuthService())),
           ),
         ],
         child: MultiBlocListener(
@@ -63,7 +66,11 @@ class LoanListScreen extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               } else if (state is LoanLoaded) {
-                return LoanList(loans: state.loans);
+                return RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<LoanBloc>().add(const LoadLoans());
+                    },
+                    child: LoanList(loans: state.loans));
               } else if (state is LoanError) {
                 return Center(
                   child: Text(

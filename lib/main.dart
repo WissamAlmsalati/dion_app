@@ -1,3 +1,6 @@
+import 'package:dion_app/features/authintication_feature/repository/auth_repository.dart';
+import 'package:dion_app/features/reset_password/domain/reset_password_impl.dart';
+import 'package:dion_app/features/reset_password/presentation/cubit/reset_password_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -41,7 +44,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AuthenticationBloc()..add(AppStarted()),
+          create: (context) =>
+              AuthenticationBloc(authRepository: AuthRepository())
+                ..add(AppStarted()),
         ),
         BlocProvider(
           create: (context) => SettleLoanBloc(
@@ -51,11 +56,14 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => LoanBloc(
             loanRepository: LoanRepository(authService: authService),
-          )..add(LoadLoans()),
+          )..add(const LoadLoans()),
         ),
         BlocProvider(
-          create: (context) => LoaningBloc()..add(FetchLoaningData()),
-        ),
+            create: (context) => LoaningBloc()..add(FetchLoaningData())),
+        BlocProvider(
+          create: (BuildContext context) =>
+              ResetPasswordCubit(ResetPasswordImpl()),
+        )
       ],
       child: MaterialApp.router(
         title: 'Authentication App',
@@ -72,19 +80,20 @@ class MyApp extends StatelessWidget {
           return Directionality(
             textDirection: TextDirection.rtl, // Enforce RTL layout
             child: BlocBuilder<AuthenticationBloc, AuthState>(
-              builder: (context, state) {
-                if (state is Authenticated) {
-                  AppRouter.router.go('/main_screen');
-                } else if (state is Unauthenticated) {
-                  AppRouter.router.go('/');
-                } else if (state is AuthLoading ) {
-                  return Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                return child!;
-              },
-            ),
+                builder: (context, state) {
+              if (state is AuthChecking) {
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(), // Loading indicator
+                  ),
+                );
+              } else if (state is Authenticated) {
+                AppRouter.router.go('/main_screen');
+              } else if (state is Unauthenticated) {
+                AppRouter.router.go('/');
+              }
+              return child!;
+            }),
           );
         },
       ),

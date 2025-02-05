@@ -16,10 +16,12 @@ class MainScreen extends StatelessWidget {
       child: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (context, state) {
           int currentIndex = 0;
-
           if (state is NavigationChanged) {
             currentIndex = state.screenIndex;
           }
+
+          final PageController pageController =
+              PageController(initialPage: currentIndex);
 
           List<Widget> screens = [
             const HomeScreen(),
@@ -29,12 +31,14 @@ class MainScreen extends StatelessWidget {
 
           return Scaffold(
             backgroundColor: Colors.white,
-            body: IndexedStack(
-              index: currentIndex,
+            body: PageView(
+              controller: pageController,
               children: screens,
+              onPageChanged: (index) {
+                context.read<NavigationBloc>().add(NavigateToScreen(index));
+              },
             ),
             bottomNavigationBar: Container(
-
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -50,6 +54,11 @@ class MainScreen extends StatelessWidget {
                 currentIndex: currentIndex,
                 onTap: (index) {
                   try {
+                    pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
                     context.read<NavigationBloc>().add(NavigateToScreen(index));
                   } catch (e) {
                     if (kDebugMode) {
@@ -58,9 +67,12 @@ class MainScreen extends StatelessWidget {
                   }
                 },
                 items: const [
-                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-                  BottomNavigationBarItem(icon: Icon(Icons.add), label: "انشاء قرض"),
-                  BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'القروض'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.home), label: 'الرئيسية'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.add), label: "إنشاء قرض"),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.attach_money), label: 'القروض'),
                 ],
               ),
             ),

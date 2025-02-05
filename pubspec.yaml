@@ -26,6 +26,8 @@ dependencies:
   pinput: ^5.0.0
   google_fonts: ^6.2.1
   flutter_localization: ^0.3.0
+  dio: ^5.8.0+1
+  flutter_svg: ^2.0.17
 
 dev_dependencies:
   flutter_test:
@@ -35,11 +37,13 @@ dev_dependencies:
 
   flutter_lints: ^4.0.0
 
-
 flutter:
-
-
   uses-material-design: true
+
+  assets:
+    - assets/images/
+
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

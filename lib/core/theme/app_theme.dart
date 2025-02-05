@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color mainColor = Color(0xFF033525);
-  static const Color defaultFontColor = Color(0xFF6B1FBE4); // Default font color
+  static const Color mainColor = Color(0xFFFB847C);
+  static const Color defaultFontColor = Color(0xFFEFF5FE); // Default font color
   static const Color bottomNavBackgroundColor = Color(0xFFE0E0E0); // Custom color for the Bottom Navigation Bar
+  static const Color textColor = Color(0xFF011A51);
 
   static ThemeData get purpleTheme {
     return ThemeData(
@@ -14,30 +15,30 @@ class AppTheme {
         secondary: Colors.white,
       ),
       useMaterial3: true, // Enable Material 3 design
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor:defaultFontColor ,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: mainColor,
         elevation: 0,
-        titleTextStyle: GoogleFonts.changa(
-          color: Colors.white,
+        titleTextStyle: GoogleFonts.titilliumWeb(
+          color: textColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       textTheme: TextTheme(
-        titleLarge: GoogleFonts.changa(
-          color: mainColor,
+        titleLarge: GoogleFonts.titilliumWeb(
+          color: textColor,
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
-        bodyLarge: GoogleFonts.changa(
-          color: mainColor,
+        bodyLarge: GoogleFonts.titilliumWeb(
+          color: textColor,
           fontSize: 18,
         ),
-        bodyMedium: GoogleFonts.changa(
-          color: mainColor,
+        bodyMedium: GoogleFonts.titilliumWeb(
+          color: textColor,
           fontSize: 16,
         ),
       ),
@@ -52,9 +53,9 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white, // Text color
           backgroundColor: mainColor, // Button color
-          textStyle: GoogleFonts.changa(
+          textStyle: GoogleFonts.titilliumWeb(
             fontSize: 16,
-            color: Colors.white,
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
           shape: RoundedRectangleBorder(
@@ -77,12 +78,12 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: mainColor, width: 2), // Focused border
         ),
-        labelStyle: GoogleFonts.changa(
-          color: mainColor,
+        labelStyle: GoogleFonts.titilliumWeb(
+          color: textColor,
           fontSize: 16,
         ),
-        hintStyle: GoogleFonts.changa(
-          color: mainColor.withOpacity(0.6),
+        hintStyle: GoogleFonts.titilliumWeb(
+          color: textColor,
           fontSize: 14,
         ),
       ),
@@ -90,11 +91,11 @@ class AppTheme {
         backgroundColor: mainColor, // Custom background color for Bottom Navigation Bar
         selectedItemColor: defaultFontColor, // Color for the selected item
         unselectedItemColor: defaultFontColor.withOpacity(0.6), // Color for unselected items
-        selectedLabelStyle: GoogleFonts.changa(
+        selectedLabelStyle: GoogleFonts.titilliumWeb(
           fontSize: 14,
           fontWeight: FontWeight.bold,
         ),
-        unselectedLabelStyle: GoogleFonts.changa(
+        unselectedLabelStyle: GoogleFonts.titilliumWeb(
           fontSize: 12,
         ),
         showUnselectedLabels: true, // Show labels for unselected items
@@ -106,7 +107,7 @@ class AppTheme {
     return AppBar(
       title: Text(
         title,
-        style: GoogleFonts.changa(
+        style: GoogleFonts.titilliumWeb(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.bold,

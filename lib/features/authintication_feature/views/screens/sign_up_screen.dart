@@ -1,111 +1,136 @@
-import 'package:dion_app/core/widgets/custom_button.dart';
-import 'package:dion_app/core/widgets/custom_text_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../../../../core/validators.dart';
-import '../../models/user_model.dart';
-import '../../services/auth_service.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
 import '../../viewmodel/auth_bloc.dart';
+import '../../repository/auth_repository.dart';
+import '../../models/user_model.dart'; // Ensure this import is present
 
 class SignUpScreen extends StatelessWidget {
   final String phoneNumber;
+  final int otp;
+  final String expiresAt;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  SignUpScreen({super.key, required this.phoneNumber});
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  SignUpScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.otp,
+    required this.expiresAt,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) {
-        return AuthenticationBloc(
-        );
-      },
+      create: (context) => AuthenticationBloc(authRepository: AuthRepository()),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('انشاء حساب جديد',
-              style: TextStyle(color: Colors.white, fontSize: 24)),
-        ),
-        body: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  CustomTextField(
-                    controller: _name,
-                    labelText: 'الاسم',
-                    hintText: 'يرجى إدخال اسمك',
-                    prefixIcon: Icons.person,
-                    keyboardType: TextInputType.text,
-                    validator: validateName,
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  CustomTextField(
-                    controller: _email,
-                    labelText: 'البريد الإلكتروني',
-                    hintText: 'أدخل بريدك الإلكتروني',
-                    prefixIcon: Icons.email,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: validateEmail,
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  CustomTextField(
-                    controller: _password,
-                    labelText: 'كلمة المرور',
-                    hintText: 'يرجى إدخال كلمة المرور',
-                    prefixIcon: Icons.lock,
-                    obscureText: true,
-                    validator: validatePassword,
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  Text('رقم الهاتف هو: $phoneNumber'),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  BlocConsumer<AuthenticationBloc, AuthState>(
-                    listener: (context, state) {
-                      if (state is SignUpSuccess) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('تم تسجيل الحساب بنجاح!')),
-                        );
-                        Navigator.pushNamed(context, '/login');
-                      } else if (state is AuthError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return CustomButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            context.read<AuthenticationBloc>().add(SignUpEvent(
-                                  user: User(
-                                    name: _name.text ,
-                                    email: _email.text ,
-                                    password: _password.text,
-                                    phoneNumber: phoneNumber,
-                                    fcmToken: '',
-                                  ),
-                                ));
-                          }
-                        },
-                        text: "تسجيل",
+        appBar: AppBar(title: const Text('تسجيل حساب جديد')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                CustomTextField(
+                  controller: _nameController,
+                  labelText: 'الاسم',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال الاسم';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextField(
+                  controller: _emailController,
+                  labelText: 'البريد الإلكتروني',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال البريد الإلكتروني';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextField(
+                  controller: _passwordController,
+                  labelText: 'كلمة المرور',
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال كلمة المرور';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextField(
+                  controller: _otpController,
+                  labelText: 'رمز التحقق',
+                  hintText: '123456',
+                  prefixIcon: Icons.password_rounded,
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال رمز التحقق';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Text('رقم الهاتف هو: $phoneNumber'),
+                const SizedBox(height: 20),
+                BlocConsumer<AuthenticationBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is SignUpSuccess) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
                       );
-                    },
-                  ),
-                ],
-              ),
+                      context.go('/login');
+                    } else if (state is AuthError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.message),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else if (state is ConnectionError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.message),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return CustomButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final user = User(
+                            name: _nameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            phoneNumber: phoneNumber,
+                            fcmToken: 'dummy_fcm_token',
+                            otpCode: _otpController.text,
+                            otpId: otp.toString(),
+                          );
+                          context
+                              .read<AuthenticationBloc>()
+                              .add(SignUpEvent(user: user));
+                        }
+                      },
+                      text: state is AuthLoading ? "جاري التسجيل..." : "تسجيل",
+                      isLoading: state is AuthLoading,
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),

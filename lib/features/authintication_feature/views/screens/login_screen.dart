@@ -1,9 +1,10 @@
-import 'package:dion_app/core/widgets/custom_button.dart';
-import 'package:dion_app/core/widgets/custom_text_field.dart';
-import 'package:dion_app/features/authintication_feature/viewmodel/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
+import '../../viewmodel/auth_bloc.dart';
+import '../../repository/auth_repository.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -50,48 +51,41 @@ class LoginScreen extends StatelessWidget {
                   obscureText: true,
                   validator: _validatePassword,
                 ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      context.push("/reset_pass_phone_screen");
+                    },
+                    child: const Text('نسيت كلمة المرور؟'),
+                  ),
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                BlocConsumer<AuthenticationBloc, AuthState>(
-                  listener: (context, state) {
-                    if (state is Authenticated) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('تم تسجيل الدخول بنجاح!')),
-                      );
-                      context.go('/main_screen');
-                    } else if (state is AuthError) {
-                      // Show the error message in a dialog
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('خطأ'),
-                            content: Text(state.message), // The error message
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // Close the dialog
-                                },
-                                child: const Text('إغلاق'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
+                BlocBuilder<AuthenticationBloc, AuthState>(
                   builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is AuthError) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                      });
+                    } else if (state is ConnectionError) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                      });
+                    }
                     return CustomButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          _onLoginPressed(context, _phoneController, _passwordController);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('يرجى إدخال تفاصيل صحيحة')),
-                          );
+                          _onLoginPressed(
+                              context, _phoneController, _passwordController);
                         }
                       },
-                      text: "تسجيل الدخول",
-                      isLoading: state is AuthLoading,
+                      text: 'تسجيل الدخول',
                     );
                   },
                 ),
@@ -114,20 +108,27 @@ class LoginScreen extends StatelessWidget {
   }
 
   String? _validatePhoneNumber(String? value) {
-    final regex = RegExp(r'^(9[1-9]\d{7})$');
+    // Update the regex to match phone numbers starting with 91, 92, 93, or 94, followed by 7 digits
+    final regex = RegExp(r'^(91|92|93|94)\d{7}$');
+
     if (value == null || value.isEmpty) {
       return 'رقم الهاتف مطلوب';
     } else if (!regex.hasMatch(value)) {
-      return 'رقم الهاتف يجب ان يبدا ب 91 او 92 او 94 و 8 ارقام';
+      return 'رقم الهاتف يجب أن يبدأ ب 91 أو 92 أو 93 أو 94 ويجب أن يتكون من 9 أرقام';
     }
     return null;
   }
 
-  void _onLoginPressed(BuildContext context, TextEditingController phoneController, TextEditingController passwordController) {
+
+  void _onLoginPressed(
+      BuildContext context,
+      TextEditingController phoneController,
+      TextEditingController passwordController) {
     final phoneNumber = phoneController.text;
     final password = passwordController.text;
-    context.read<AuthenticationBloc>().add(LoginEvent(
-        phoneNumber: phoneNumber, password: password));
+    context
+        .read<AuthenticationBloc>()
+        .add(LoginEvent(phoneNumber: phoneNumber, password: password));
   }
 
   String? _validatePassword(String? value) {

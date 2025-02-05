@@ -37,7 +37,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
         body: BlocConsumer<CreateLoanBloc, CreateLoanState>(
           listener: (context, state) {
             if (state is CreateLoanError) {
-              print(""+state.message);
+              print("" + state.message);
               _showDialog(context, 'خطأ', state.message);
             } else if (state is CreateLoanCreated) {
               _showDialog(context, 'نجاح', 'تم إنشاء الدين بنجاح');
@@ -98,6 +98,8 @@ class _LoaningScreenState extends State<LoaningScreen> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             CustomTextField(
               controller: _notesController,
+              maxLines: 4,
+              minLines: 1,
               labelText: 'ملاحظات',
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -118,17 +120,18 @@ class _LoaningScreenState extends State<LoaningScreen> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    final phoneNumber = _phoneNumberController.text;
                     final loaningModel = LoaningModel(
                       deptName: _deptNameController.text,
-                      phoneNumber: _phoneNumberController.text,
+                      phoneNumber: phoneNumber,
                       amount: double.parse(_amountController.text),
                       dueDate: DateTime.now().toString(),
                       notes: _notesController.text,
                       loanType: 0,
                     );
                     context.read<CreateLoanBloc>().add(
-                      CreateLoan(loaningModel: loaningModel),
-                    );
+                          CreateLoan(loaningModel: loaningModel),
+                        );
                   }
                 },
                 child: const Text(

@@ -1,23 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:dion_app/features/authintication_feature/models/user_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import for secure storage
-import 'package:http/http.dart' as http;
-import '../../../core/network/api_constants.dart';
-import '../models/user_model.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../repository/auth_repository.dart';
 import '../services/auth_service.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
 
 class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
-  final FlutterSecureStorage _storage = FlutterSecureStorage(); // Secure storage instance
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
   final AuthService authService = AuthService();
-  final FlutterSecureStorage storage = FlutterSecureStorage();
+  final AuthRepository authRepository;
 
-  AuthenticationBloc() : super(AuthInitial()) {
+  AuthenticationBloc({required this.authRepository}) : super(AuthInitial()) {
     on<AppStarted>(_onAppStarted);
     on<LoginEvent>(_onLogin);
     on<LogoutEvent>(_onLogout);
@@ -26,9 +24,8 @@ class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
     on<VerifyOtpEvent>(_onVerifyOtp);
   }
 
-
   Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+    emit(AuthChecking()); // New state to indicate loading at startup
     try {
       final token = await authService.getToken();
       if (token != null) {
@@ -41,132 +38,90 @@ class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-Future<void> _onSendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
-  emit(AuthLoading());
-  try {
-    final response = await http.get(
-      Uri.parse("${ApiConstants.sendOtpEndpoint}${event.phoneNumber}"),
-    );
-    print(response.statusCode);
-
-    if (response.statusCode == 200) {
-      emit(OtpSent());
-    } else {
-      emit(AuthError(message: "Failed to send OTP: ${response.reasonPhrase}"));
+  Future<void> _onSendOtp(SendOtpEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final responseData = await authRepository.sendOtp(event.phoneNumber);
+      final otp = responseData['otp'];
+      final expiresAt = responseData['expiresAt'];
+      emit(OtpSent(otp: otp, expiresAt: expiresAt));
+    } on SocketException {
+      emit(ConnectionError(message: "No internet connection"));
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
     }
-  } catch (e) {
-    emit(AuthError(message: "Error: ${e.toString()}"));
   }
-}
 
   Future<void> _onVerifyOtp(
       VerifyOtpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.verifyOtpEndpoint),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "otpCode": event.otpCode,
-          "phoneNumber": event.phoneNumber,
-        }),
-      );
-      print(response.statusCode);
-
-      if (response.statusCode == 200) {
-        emit(OtpVerified());
-      } else {
-        emit(AuthError(
-            message: "Failed to verify OTP: ${response.reasonPhrase}"));
-      }
+      await authRepository.verifyOtp(event.phoneNumber, event.otpCode);
+      emit(OtpVerified());
+    } on SocketException {
+      emit(ConnectionError(message: "No internet connection"));
     } catch (e) {
-      emit(AuthError(message: "Error: ${e.toString()}"));
+      emit(AuthError(message: e.toString()));
     }
   }
 
   Future<void> _onSignUp(SignUpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.registerEndpoint),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "name": event.user.name,
-          "email": event.user.email,
-          "password": event.user.password,
-          "phoneNumber": event.user.phoneNumber,
-          "fcmToken": event.user.fcmToken,
-        }),
-      );
-      print(response.statusCode);
-      print(response.body);
+      await authRepository.signUp({
+        "name": event.user.name,
+        "email": event.user.email,
+        "password": event.user.password,
+        "phoneNumber": event.user.phoneNumber,
+        "fcmToken": event.user.fcmToken,
+        "otp": event.user.otpCode,
+        "otpId": event.user.otpId,
+      });
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final token = responseData['token'];
+      final token = await authService.getToken();
+      await _storage.write(key: 'AuthToken', value: token);
 
-        await _storage.write(key: 'AuthToken', value: token);
-
-        emit(SignUpSuccess(message: "Registration Successful!"));
-        emit(Authenticated(token: token));
-      } else {
-        try {
-          final responseData = json.decode(response.body);
-          final errorMessage = responseData['title'] ?? "Failed to register: ${response.reasonPhrase}";
-          emit(AuthError(message: errorMessage));
-        } catch (e) {
-          final errorMessage = response.body;
-          emit(AuthError(message: errorMessage));
-        }
-      }
+      emit(SignUpSuccess(message: "Registration Successful!"));
+      emit(Authenticated(token: token!));
+    } on SocketException {
+      emit(ConnectionError(message: "No internet connection"));
     } catch (e) {
-      print(e);
-      emit(AuthError(message: "An unexpected error occurred: ${e.toString()}"));
+      if (e is AuthException) {
+        emit(AuthError(message: e.message));
+      } else {
+        emit(AuthError(message: e.toString()));
+      }
     }
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
+
     try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.loginEndpoint),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "phoneNumber": event.phoneNumber,
-          "password": event.password,
-        }),
-      );
-      print(response.body);
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final token = responseData['AuthToken'];
-        print(
-            "Token: $token");
-        final expiresAt = responseData['expiresAt'];
+      final responseData =
+          await authRepository.login(event.phoneNumber, event.password);
 
-        // Store the token and expiration date securely
-        await _storage.write(key: 'AuthToken', value: token);
-        await _storage.write(key: 'expires_at', value: expiresAt);
+      final token = responseData['AuthToken'];
+      final expiresAt = responseData['expiresAt'];
 
-        emit(Authenticated(token: token));
-      } else {
-        emit(AuthError(message: "Failed to login: ${response.reasonPhrase}"));
-      }
+      _storage.write(key: 'AuthToken', value: token);
+      await _storage.write(key: 'expires_at', value: expiresAt);
+
+      emit(Authenticated(token: token));
+    } on SocketException {
+      emit(ConnectionError(message: "No internet connection"));
     } catch (e) {
-      emit(AuthError(message: "Error: ${e.toString()}"));
+      emit(AuthError(message: e.toString()));
     }
   }
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     await _storage.delete(key: 'auth_token');
-    try{
+    try {
       await _storage.deleteAll();
       emit(LogOutSucess());
-    }catch(e){
-      emit(LogOutError(message: "Error: ${e.toString()}"));
-      print(e);
+    } catch (e) {
+      emit(LogOutError(message: e.toString()));
     }
-
   }
 }

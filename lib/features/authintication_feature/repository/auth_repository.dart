@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 import '../../../core/network/api_constants.dart';
 
 class AuthRepository {
-
-
   Future<Map<String, dynamic>> sendOtp(String phoneNumber) async {
     final response = await http.get(
       Uri.parse('${ApiConstants.sendOtpEndpoint}$phoneNumber'),
@@ -12,76 +10,69 @@ class AuthRepository {
     );
 
     if (response.statusCode == 200) {
-      print('OTP Response: ${response.body}');
       return json.decode(response.body);
     } else {
-      print('OTP Response: ${response.body}');
-      throw Exception('Failed to send OTP: ${response.reasonPhrase}');
+      throw AuthException('Failed to send OTP: ${response.reasonPhrase}');
     }
   }
 
-  Future<Map<String, dynamic>> verifyOtp(String phoneNumber, String otp) async {
+  Future<void> verifyOtp(String phoneNumber, String otpCode) async {
     final response = await http.post(
       Uri.parse(ApiConstants.verifyOtpEndpoint),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'phoneNumber': phoneNumber, 'otpCode': otp}),
+      body: json.encode({'phoneNumber': phoneNumber, 'otpCode': otpCode}),
     );
 
+    print("OTP Verification Response Code: ${response.statusCode}");
+    print("OTP Verification Response: ${response.body}");
 
-    print('OTP Verification Response Code: ${response.statusCode}');
-
-
-    if (response.statusCode == 200) {
+    if (response.statusCode != 200) {
       final responseBody = json.decode(response.body);
-      return responseBody;
-    } else {
-      throw Exception('Invalid OTP: ${response.reasonPhrase}');
+      final errorMessage = responseBody['message'] ?? 'Failed to verify OTP';
+      throw AuthException(errorMessage);
     }
   }
 
-  // Function for login with phone number and OTP
-  Future<Map<String, dynamic>> login(String phoneNumber, String otp) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.loginEndpoint),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'phone_number': phoneNumber, 'otp': otp}),
-    );
-print("Auth Code: ${response.statusCode}");
-    print('Login Response: ${response.body}');
-    print('Login Response Code: ${response.statusCode}');
-    print(otp);
-
-    if (response.statusCode == 200) {
-      final responseBody = json.decode(response.body);
-      print('Login Response: $responseBody');
-      return responseBody;
-    } else {
-      throw Exception('Failed to login: ${response.reasonPhrase}');
-    }
-  }
-
-  // Function for registration with name, email, password, and fcm token
-  Future<Map<String, dynamic>> register({
-    required String name,
-    required String email,
-    required String password,
-    required String fcmToken,
-  }) async {
+  Future<void> signUp(Map<String, dynamic> user) async {
     final response = await http.post(
       Uri.parse(ApiConstants.registerEndpoint),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'name': name,
-        'email': email,
-        'password': password,
-        'fcm_token': fcmToken,
-      }),
+      body: json.encode(user),
     );
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to register: ${response.reasonPhrase}');
+    print("SignUp Response Code: ${response.statusCode}");
+    print("SignUp Response: ${response.body}");
+    if (response.statusCode != 200) {
+      final responseBody = json.decode(response.body);
+      final errorMessage = responseBody['message'] ?? 'Failed to register';
+      throw AuthException(errorMessage);
     }
   }
+
+  Future<Map<String, dynamic>> login(
+      String phoneNumber, String password) async {
+    print(phoneNumber);
+    print(password);
+    final response = await http.post(
+      Uri.parse(ApiConstants.loginEndpoint),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'phoneNumber': phoneNumber, 'password': password}),
+    );
+
+    print("Login Response Code: ${response.statusCode}");
+    print("Login Response: ${response.body}");
+
+    if (response.statusCode != 200) {
+      throw AuthException('${response.reasonPhrase}');
+    }
+
+    return json.decode(response.body);
+  }
+}
+
+class AuthException implements Exception {
+  final String message;
+  AuthException(this.message);
+
+  @override
+  String toString() => message;
 }

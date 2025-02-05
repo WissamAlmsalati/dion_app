@@ -16,7 +16,8 @@ class LoanDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoanStatusBloc(acceptLoanRepository: AcceptLoanRepository()),
+      create: (context) =>
+          LoanStatusBloc(acceptLoanRepository: AcceptLoanRepository()),
       child: BlocListener<SettleLoanBloc, SettleLoanState>(
         listener: (context, state) {
           if (state is SettleLoanSuccess) {
@@ -44,24 +45,30 @@ class LoanDetailScreen extends StatelessWidget {
                 children: [
                   _buildDetailItem('اسم المدين', loan.deptName),
                   _buildDetailItem('الهاتف', loan.phoneNumber),
-                  _buildDetailItem('المبلغ', '\$${loan.amount.toStringAsFixed(2)}'),
-                  _buildDetailItem('المبلغ المسترد', '\$${loan.refundAmount.toStringAsFixed(2)}'),
-                  _buildDetailItem('تاريخ الاستحقاق', loan.dueDate.toLocal().toString().split(' ')[0]),
+                  _buildDetailItem(
+                      'المبلغ', '\$${loan.amount.toStringAsFixed(2)}'),
+                  _buildDetailItem('المبلغ المسترد',
+                      '\$${loan.refundAmount.toStringAsFixed(2)}'),
+                  _buildDetailItem('تاريخ الاستحقاق',
+                      loan.dueDate.toLocal().toString().split(' ')[0]),
                   _buildDetailItem('ملاحظات', loan.notes),
-                  _buildDetailItem('تاريخ التحديث', loan.updatedAt.toLocal().toString().split(' ')[0]),
+                  _buildDetailItem('تاريخ التحديث',
+                      loan.updatedAt.toLocal().toString().split(' ')[0]),
                   _buildDetailItem(
                     loan.creditor != null ? 'الدائن' : 'المدين',
-                    loan.creditor != null ? loan.creditor!.name : loan.debtor!.name,
+                    loan.creditor != null
+                        ? loan.creditor!.name
+                        : loan.debtor!.name,
                   ),
                   _buildDetailItem(
                     'حالة القرض',
                     loan.loanStatus == 0
                         ? "في انتظار القبول"
                         : loan.loanStatus == 1
-                        ? "تم قبول القرض"
-                        : loan.loanStatus == 2
-                        ? "تم رفض القرض"
-                        : "تم التسوية",
+                            ? "تم قبول القرض"
+                            : loan.loanStatus == 2
+                                ? "تم رفض القرض"
+                                : "تم التسوية",
                   ),
                   const SizedBox(height: 20),
                   BlocBuilder<LoanStatusBloc, LoanStatusState>(
@@ -83,11 +90,13 @@ class LoanDetailScreen extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 context.read<LoanStatusBloc>().add(
-                                    UpdateLoanStatus(loanId: loan.id, loanStatus: 1));
+                                    UpdateLoanStatus(
+                                        loanId: loan.id, loanStatus: 1));
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -105,11 +114,13 @@ class LoanDetailScreen extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 context.read<LoanStatusBloc>().add(
-                                    UpdateLoanStatus(loanId: loan.id, loanStatus: 2));
+                                    UpdateLoanStatus(
+                                        loanId: loan.id, loanStatus: 2));
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -127,7 +138,8 @@ class LoanDetailScreen extends StatelessWidget {
                             const CircularProgressIndicator(
                               color: Colors.blue,
                             ),
-                          ] else if (loan.creditor == null && loan.loanStatus == 1) ...[
+                          ] else if (loan.creditor == null &&
+                              loan.loanStatus == 1) ...[
                             BlocBuilder<SettleLoanBloc, SettleLoanState>(
                               builder: (context, state) {
                                 if (state is SettleLoanLoading) {
@@ -137,12 +149,16 @@ class LoanDetailScreen extends StatelessWidget {
                                 }
                                 return ElevatedButton(
                                   onPressed: () {
-                                    _showSettleDialog(context, loan.id, loan.amount - loan.refundAmount, () {
-                                      context.read<LoanBloc>().add(const LoadLoans());
+                                    _showSettleDialog(context, loan.id,
+                                        loan.amount - loan.refundAmount, () {
+                                      context
+                                          .read<LoanBloc>()
+                                          .add(const LoadLoans());
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 12),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -218,7 +234,8 @@ class LoanDetailScreen extends StatelessWidget {
     );
   }
 
-  void _showSettleDialog(BuildContext context, int loanId, double maxAmount, VoidCallback onSettleSuccess) {
+  void _showSettleDialog(BuildContext context, int loanId, double maxAmount,
+      VoidCallback onSettleSuccess) {
     final TextEditingController amountController = TextEditingController();
     String? errorMessage;
 
@@ -237,7 +254,8 @@ class LoanDetailScreen extends StatelessWidget {
                   ),
                 );
                 onSettleSuccess(); // Call the callback to refresh the data
-                Navigator.pop(context, true); // Close dialog on success and pass result
+                Navigator.pop(
+                    context, true); // Close dialog on success and pass result
               } else if (state is SettleLoanFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -279,26 +297,31 @@ class LoanDetailScreen extends StatelessWidget {
                     BlocBuilder<SettleLoanBloc, SettleLoanState>(
                       builder: (context, state) {
                         if (state is SettleLoanLoading) {
-                          return const SizedBox.shrink(); // Hide buttons when loading
+                          return const SizedBox
+                              .shrink(); // Hide buttons when loading
                         }
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context); // Close dialog without action
+                                Navigator.pop(
+                                    context); // Close dialog without action
                               },
                               child: const Text('إلغاء'),
                             ),
                             TextButton(
                               onPressed: () {
-                                final amount = double.tryParse(amountController.text) ?? 0.0;
+                                final amount =
+                                    double.tryParse(amountController.text) ??
+                                        0.0;
                                 if (amount > 0 && amount <= maxAmount) {
-                                  context.read<SettleLoanBloc>().add(
-                                      SettleLoan(loanId: loanId, amount: amount));
+                                  context.read<SettleLoanBloc>().add(SettleLoan(
+                                      loanId: loanId, amount: amount));
                                 } else {
                                   setState(() {
-                                    errorMessage = 'القيمة المتبقية من الدين هي ${maxAmount.toStringAsFixed(2)}';
+                                    errorMessage =
+                                        'القيمة المتبقية من الدين هي ${maxAmount.toStringAsFixed(2)}';
                                   });
                                 }
                               },
@@ -317,7 +340,6 @@ class LoanDetailScreen extends StatelessWidget {
       },
     ).then((result) {
       if (result == true) {
-        // Refresh the screen when dialog closes with success
         onSettleSuccess();
       }
     });

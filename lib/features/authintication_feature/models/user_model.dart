@@ -4,6 +4,8 @@ class User {
   final String phoneNumber;
   final String password;
   final String fcmToken;
+  final String otpCode;
+  final String otpId;
 
   User({
     required this.name,
@@ -11,6 +13,8 @@ class User {
     required this.phoneNumber,
     required this.password,
     required this.fcmToken,
+    required this.otpCode,
+    required this.otpId,
   });
 
   // Factory method to create a User from JSON
@@ -21,6 +25,8 @@ class User {
       phoneNumber: json['phoneNumber'] ?? '',
       password: json['password'] ?? '',
       fcmToken: json['fcmToken'] ?? '',
+      otpCode: json['otp'] ?? '',
+      otpId: json['otpId'] ?? '',
     );
   }
 
@@ -32,6 +38,8 @@ class User {
       'phoneNumber': phoneNumber,
       'password': password,
       'fcmToken': fcmToken,
+      'otp': otpCode,
+      'otpId': otpId,
     };
   }
 }

@@ -7,10 +7,8 @@ abstract class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// Event to check if the app is starting
 class AppStarted extends AuthEvent {}
 
-// Event to send OTP
 class SendOtpEvent extends AuthEvent {
   final String phoneNumber;
 
@@ -29,7 +27,6 @@ class ResendOtpEvent extends AuthEvent {
   List<Object?> get props => [phoneNumber];
 }
 
-// Event to verify OTP
 class VerifyOtpEvent extends AuthEvent {
   final String otpCode;
   final String phoneNumber;
@@ -40,7 +37,6 @@ class VerifyOtpEvent extends AuthEvent {
   List<Object?> get props => [otpCode, phoneNumber];
 }
 
-// Event to handle sign-up
 class SignUpEvent extends AuthEvent {
   final User user;
 

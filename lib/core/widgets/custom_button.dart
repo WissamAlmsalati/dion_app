@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
@@ -42,8 +44,8 @@ class CustomButton extends StatelessWidget {
                 text,
 
                 style: const TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF033525),
+                  fontSize: 14,
+                  color: AppTheme.bottomNavBackgroundColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),

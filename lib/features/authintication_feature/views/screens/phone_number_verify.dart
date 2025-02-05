@@ -1,9 +1,13 @@
+import 'package:dion_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/custom_text_phone_number_field.dart';
 import '../../viewmodel/auth_bloc.dart';
+import '../../repository/auth_repository.dart';
 
 class VerifyPhoneNumber extends StatelessWidget {
   VerifyPhoneNumber({Key? key}) : super(key: key);
@@ -13,89 +17,112 @@ class VerifyPhoneNumber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CustomTextField(
-                  controller: _phoneController,
-                  labelText: 'رقم الهاتف',
-                  hintText: '910000000',
-                  prefixIcon: Icons.phone,
-                  keyboardType: TextInputType.phone,
-                  validator: _validatePhoneNumber,
+    return BlocProvider(
+      create: (context) => AuthenticationBloc(authRepository: AuthRepository()),
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding:  EdgeInsets.only(
+              left:  MediaQuery.sizeOf(context).height  * 0.04,
+              right:  MediaQuery.sizeOf(context).height  * 0.04,
+              top:  MediaQuery.sizeOf(context).height  * 0.02,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                SizedBox(height: MediaQuery.sizeOf(context).height  * 0.04,),
+                  Text("انشاء حساب",style:Theme.of(context).textTheme.displaySmall,),
 
-                ),
-                const SizedBox(height: 20),
-                BlocListener<AuthenticationBloc, AuthState>(
-                  listener: (context, state) {
-                    print('Current State: $state'); // Debug state transitions
-                    if (state is OtpSent) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('تم إرسال OTP بنجاح!')),
-                      );
-                      context.push('/otp', extra: _phoneController.text);
-                    } else if (state is AuthError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
-                      );
-                    }
-                  },
-                  child: BlocBuilder<AuthenticationBloc, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return CustomButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            final phoneNumber = _phoneController.text;
-                            context.read<AuthenticationBloc>().add(
-                              SendOtpEvent(phoneNumber: phoneNumber),
-                            );
-                          }
-                        },
-                        text: 'تأكيد رقم الهاتف',
-                      );
-                    },
+                  Text("لاستخدام التطبيق يجب عليك اولاانشاء حساب",style:Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 14,
+                    color: AppTheme.textColor.withOpacity(0.5)
+                  ),),
+                  SizedBox(height: MediaQuery.sizeOf(context).height  * 0.04,),
+
+                  SvgPicture.asset("assets/images/registerImage.svg",height: MediaQuery.sizeOf(context).height * 0.2,width: 100,),
+
+                  SizedBox(height: MediaQuery.sizeOf(context).height  * 0.08,),
+
+
+                  CustomPhoneTextField(
+
+                    controller: _phoneController,
+
                   ),
-                ),
-                const SizedBox(height: 20),
-                const Center(child: Text('لديك حساب بالفعل؟')),
-                const SizedBox(height: 10),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      context.push('/login');
+
+                  const SizedBox(height: 20),
+                  BlocListener<AuthenticationBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is OtpSent) {
+                        print("OTP Sent: ${state.otp}, Expires At: ${state.expiresAt}");
+                        context.push('/signup', extra: {
+                          'phoneNumber': _phoneController.text ?? "",
+                          'otp': state.otp?? "  ",
+                          'expiresAt': state.expiresAt ?? "", //
+                        });
+                      }
+
+
+                      if (state is AuthError || state is ConnectionError) {
+                        final message = state is AuthError
+                            ? state.message
+                            : (state as ConnectionError).message;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(message),
+                            backgroundColor: state is ConnectionError
+                                ? Colors.orange
+                                : Colors.red,
+                          ),
+                        );
+                      }
                     },
-                    child: const Text(
-                      'تسجيل الدخول',
-                      style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
+
+                    child: BlocBuilder<AuthenticationBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+
+                        return CustomButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              final phoneNumber = _phoneController.text;
+                              context.read<AuthenticationBloc>().add(
+                                    SendOtpEvent(phoneNumber: phoneNumber),
+                                  );
+                            }
+                          },
+                          text: 'تأكيد رقم الهاتف',
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('لديك حساب؟'),
+                      GestureDetector(
+                        onTap: () {
+                          context.push('/login');
+                        },
+                        child: const Text(
+                          'تسجيل الدخول',
+                          style: TextStyle(
+                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  String? _validatePhoneNumber(String? value) {
-    final regex = RegExp(r'^(9[1-9]\d{7})$');
-    if (value == null || value.isEmpty) {
-      return 'رقم الهاتف مطلوب';
-    } else if (!regex.hasMatch(value)) {
-      return 'رقم الهاتف يجب ان يبدا ب 91 او 92 او 94 و 8 ارقام';
-    }
-    return null;
   }
 }
