@@ -10,10 +10,9 @@ class Loan {
   final String notes;
   final DateTime updatedAt;
   final String loanStatus; // Changed from int to String
-  final int loanType; 
-  final User? creditor;
-  final User? debtor;
-
+  final int loanType;
+  // Optionally, you may parse creditor/debtor objects if they exist.
+  
   Loan({
     required this.id,
     required this.deptName,
@@ -27,10 +26,8 @@ class Loan {
     required this.updatedAt,
     required this.loanStatus,
     required this.loanType,
-    this.creditor,
-    this.debtor,
   });
-
+  
   factory Loan.fromJson(Map<String, dynamic> json) {
     return Loan(
       id: json['id'] ?? 0,
@@ -42,34 +39,11 @@ class Loan {
       refundAmount: (json['refundAmount'] ?? 0).toDouble(),
       dueDate: DateTime.parse(json['dueDate']),
       notes: json['notes'] ?? '',
-      updatedAt: DateTime.parse(json['updatedAt']),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : DateTime.now(),
       loanStatus: json['loanStatus'] ?? '',
       loanType: json['loanType'] ?? 0,
-      creditor: json['creditor'] != null ? User.fromJson(json['creditor']) : null,
-      debtor: json['debtor'] != null ? User.fromJson(json['debtor']) : null,
-    );
-  }
-}
-
-class User {
-  final int id;
-  final String name;
-  final String email;
-  final String phoneNumber;
-
-  User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      phoneNumber: json['phoneNumber'] ?? '',
     );
   }
 }

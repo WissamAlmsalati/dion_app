@@ -16,7 +16,7 @@ class CustomTextField extends StatelessWidget {
   final double? width;
   final double? borderRadius;
   final Widget? suffixIcon;
-  final String? type; // This will be used to determine maxLength
+  final int maxLength;
 
   const CustomTextField({
     super.key,
@@ -34,14 +34,13 @@ class CustomTextField extends StatelessWidget {
     this.width,
     this.borderRadius,
     this.suffixIcon,
-    this.type,
+    required this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    int maxLength = _setMaxLength(type);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9.0),
@@ -60,19 +59,12 @@ class CustomTextField extends StatelessWidget {
               obscureText: obscureText,
               maxLines: maxLines ?? 1,
               minLines: minLines ?? 1,
+              
               maxLength: maxLength,
               decoration: InputDecoration(
                 labelText: labelText,
                 hintText: hintText,
-                prefixIcon: keyboardType == TextInputType.phone
-                    ? (controller.text.isEmpty
-                    ? Text(
-                  '+218',
-                  style: TextStyle(
-                      fontSize: 16, color: theme.primaryColor),
-                )
-                    : Icon(prefixIcon ?? Icons.phone))
-                    : null,
+            
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
                   borderSide: BorderSide(
@@ -112,18 +104,5 @@ class CustomTextField extends StatelessWidget {
     );
   }
 
-  int _setMaxLength(String? value) {
-    switch (value) {
-      case 'name':
-        return 30;
-      case 'password':
-        return 8;
-      case 'otp':
-        return 6;
-      case 'phone':
-        return 9;
-      default:
-        return 50;
-    }
-  }
+ 
 }

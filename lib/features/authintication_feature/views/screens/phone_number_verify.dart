@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_text_phone_number_field.dart';
@@ -58,14 +59,15 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
                     Text(
                       "انشاء حساب",
-                      style: Theme.of(context).textTheme.displaySmall,
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: AppTheme.mainColor,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: GoogleFonts.tajawal().fontFamily,
+                      ),
                     ),
                     Text(
                       "لاستخدام التطبيق يجب عليك اولاانشاء حساب",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 14,
-                        color: AppTheme.textColor.withOpacity(0.5),
-                      ),
+                      
                     ),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
                     SvgPicture.asset(
@@ -79,7 +81,7 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                       validator: _validatePhoneNumber,
                       controller: _phoneController,
                     ),
-                    const SizedBox(height: 20),
+                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
                     // Using BlocConsumer to listen and build
                     BlocConsumer<AuthenticationBloc, AuthState>(
                       listener: (context, state) {
@@ -121,7 +123,7 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
+                     SizedBox(height:  MediaQuery.sizeOf(context).height * 0.02),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

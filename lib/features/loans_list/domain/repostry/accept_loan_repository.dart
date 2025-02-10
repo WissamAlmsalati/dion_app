@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../authintication_feature/services/auth_service.dart';
+import '../../../authintication_feature/services/auth_service.dart';
 
 class AcceptLoanRepository {
   static const String apiUrl = 'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/Loaning/UpdateLoanStatus';

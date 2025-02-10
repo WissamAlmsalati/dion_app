@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../authintication_feature/services/auth_service.dart';
-import '../models/loan.dart';
+import '../../../authintication_feature/services/auth_service.dart';
+import '../../models/loan.dart';
 
 class LoanRepository {
   final String apiUrl =
@@ -10,23 +10,35 @@ class LoanRepository {
 
   LoanRepository({required this.authService});
 
-  Future<List<Loan>> fetchLoans({required int page, required int pageSize}) async {
+  /// Fetches loans by type. The API expects a query parameter named "loanType".
+  Future<Map<String, dynamic>> fetchLoans({
+    required int page,
+    required int pageSize,
+    required String loanType,
+  }) async {
     final token = await authService.getToken();
 
     final response = await http.get(
-      Uri.parse('$apiUrl?status=&page=$page&pageSize=$pageSize'),
+      Uri.parse(
+          '$apiUrl?status=&loanType=$loanType&page=$page&pageSize=$pageSize'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
-    print(response.body);
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List<Loan> loans =
-          (data as List).map((loanData) => Loan.fromJson(loanData)).toList();
-      return loans;
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> loansJson = data['loans'];
+      final List<Loan> loans = loansJson
+          .map((loanData) => Loan.fromJson(loanData))
+          .toList();
+      final int remainingLoansCount = data['remainingLoansCount'] ?? 0;
+
+      return {
+        'loans': loans,
+        'remainingLoansCount': remainingLoansCount,
+      };
     } else {
       throw Exception('Failed to load loans');
     }
@@ -42,8 +54,6 @@ class LoanRepository {
         'Authorization': 'Bearer $token',
       },
     );
-    print(response.body);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       return Loan.fromJson(data);

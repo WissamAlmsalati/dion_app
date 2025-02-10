@@ -35,21 +35,23 @@ class _LoaningScreenState extends State<LoaningScreen> {
           title: const Text('انشاء دين'),
           centerTitle: true,
         ),
-        body: BlocConsumer<CreateLoanBloc, CreateLoanState>(
-          listener: (context, state) {
-            if (state is CreateLoanError) {
-              print("" + state.message);
-              _showDialog(context, 'خطأ', state.message);
-            } else if (state is CreateLoanCreated) {
-              _showDialog(context, 'نجاح', 'تم إنشاء الدين بنجاح');
-            }
-          },
-          builder: (context, state) {
-            if (state is CreateLoanLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return _buildForm(context);
-          },
+        body: SingleChildScrollView(
+          child: BlocConsumer<CreateLoanBloc, CreateLoanState>(
+            listener: (context, state) {
+              if (state is CreateLoanError) {
+                print("" + state.message);
+                _showDialog(context, 'خطأ', state.message);
+              } else if (state is CreateLoanCreated) {
+                _showDialog(context, 'نجاح', 'تم إنشاء الدين بنجاح');
+              }
+            },
+            builder: (context, state) {
+              if (state is CreateLoanLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return _buildForm(context);
+            },
+          ),
         ),
       ),
     );
@@ -65,12 +67,13 @@ class _LoaningScreenState extends State<LoaningScreen> {
             CustomTextField(
               controller: _deptNameController,
               labelText: 'اسم الدين',
+              
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'يرجي ادخال اسم الدين';
                 }
                 return null;
-              },
+              }, maxLength: 30,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             CustomTextField(
@@ -82,7 +85,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
                   return 'يرجي ادخال رقم الهاتف';
                 }
                 return null;
-              },
+              }, maxLength: 9,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             CustomTextField(
@@ -94,7 +97,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
                   return 'يرجي ادخال المبلغ';
                 }
                 return null;
-              },
+              }, maxLength: 7,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             CustomTextField(
@@ -107,7 +110,7 @@ class _LoaningScreenState extends State<LoaningScreen> {
                   return 'يرجي ادخال الملاحظات';
                 }
                 return null;
-              },
+              }, maxLength: 144
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             SizedBox(

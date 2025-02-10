@@ -24,6 +24,17 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     }
   }
 
+  void resendOtp(String phoneNumber) async {
+    emit(ResetPasswordLoading());
+    try {
+      final response = await resetPasswordImpl.sendOtp(phoneNumber: phoneNumber);
+      otpId = response['otpId'];  // Store the otpId from the response
+      emit(ResendOtpSuccess());
+    } catch (e) {
+      emit(ResendOtpFailure(e.toString()));
+    }
+  }
+
   void resetPassword(int otp, String newPassword) async {
     print("Reset Password");
 

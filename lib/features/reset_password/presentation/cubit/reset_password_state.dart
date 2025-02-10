@@ -21,6 +21,13 @@ class ResetPasswordSuccess extends ResetPasswordState {
   ResetPasswordSuccess({required this.message});
 }
 
+class ResendOtpSuccess extends ResetPasswordState {}
+
+class ResendOtpFailure extends ResetPasswordState {
+  final String error;
+  ResendOtpFailure(this.error);
+}
+
 class ResetPasswordFailure extends ResetPasswordState {
   final String error;
   ResetPasswordFailure(this.error);

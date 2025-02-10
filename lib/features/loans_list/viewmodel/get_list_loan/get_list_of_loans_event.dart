@@ -1,9 +1,5 @@
 part of 'get_list_of_loans_bloc.dart';
 
-
-
-
-@immutable
 abstract class LoanEvent extends Equatable {
   const LoanEvent();
 
@@ -13,22 +9,19 @@ abstract class LoanEvent extends Equatable {
 
 class LoadLoans extends LoanEvent {
   final int page;
+  final String loanType; // New parameter to indicate type
 
-  const LoadLoans({this.page = 1});
+  const LoadLoans({this.page = 1, required this.loanType});
 
   @override
-  List<Object?> get props => [page];
+  List<Object?> get props => [page, loanType];
 }
-
 
 class LoadLoanDetails extends LoanEvent {
   final int loanId;
 
-  LoadLoanDetails(this.loanId);
+  const LoadLoanDetails({required this.loanId});
+
+  @override
+  List<Object?> get props => [loanId];
 }
-
-class LoadMoreLoans extends LoanEvent {
-  const LoadMoreLoans();
-}
-
-

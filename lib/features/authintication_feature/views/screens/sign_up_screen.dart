@@ -60,13 +60,12 @@ class SignUpScreen extends StatelessWidget {
                     CustomTextField(
                       controller: _nameController,
                       labelText: 'الاسم',
-                      type: "name",
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'يرجى إدخال الاسم';
                         }
                         return null;
-                      },
+                      }, maxLength: 20,
                     ),
                     CustomTextField(
                       controller: _emailController,
@@ -77,19 +76,18 @@ class SignUpScreen extends StatelessWidget {
                           return 'يرجى إدخال البريد الإلكتروني';
                         }
                         return null;
-                      },
+                      }, maxLength: 20,
                     ),
                     CustomTextField(
                       controller: _passwordController,
                       labelText: 'كلمة المرور',
                       obscureText: true,
-                      type : "password",
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'يرجى إدخال كلمة المرور';
                         }
                         return null;
-                      },
+                      }, maxLength: 8,
                     ),
                     CustomTextField(
 
@@ -98,13 +96,12 @@ class SignUpScreen extends StatelessWidget {
                       hintText: '123456',
                       prefixIcon: Icons.password_rounded,
                       obscureText: false,
-                      type: "otp",
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'يرجى إدخال رمز التحقق';
                         }
                         return null;
-                      },
+                      }, maxLength: 6,
                     ),
                     const SizedBox(height: 20),
                     // Text('رقم الهاتف هو: $phoneNumber'),

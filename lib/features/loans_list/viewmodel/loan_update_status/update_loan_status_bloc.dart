@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import '../../repostry/accept_loan_repository.dart';
+import '../../domain/repostry/accept_loan_repository.dart';
 
 part 'update_loan_status_event.dart';
 part 'update_loan_status_state.dart';

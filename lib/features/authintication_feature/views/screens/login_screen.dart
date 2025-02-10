@@ -1,5 +1,7 @@
+import 'package:dion_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
@@ -24,15 +26,29 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
+      body: BlocListener<AuthenticationBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError || state is ConnectionError) {
+            final message = state is AuthError ? state.message : (state as ConnectionError).message;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+            });
+          }
+        },
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                SvgPicture.asset(
+                  "assets/images/registerImage.svg",
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  width: 100,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.06),
                 CustomTextField(
                   controller: _phoneController,
                   labelText: 'رقم الهاتف',
@@ -40,6 +56,7 @@ class LoginScreen extends StatelessWidget {
                   prefixIcon: Icons.phone,
                   keyboardType: TextInputType.phone,
                   validator: _validatePhoneNumber,
+                  maxLength: 9,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 CustomTextField(
@@ -50,6 +67,7 @@ class LoginScreen extends StatelessWidget {
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: true,
                   validator: _validatePassword,
+                  maxLength: 8,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -65,18 +83,6 @@ class LoginScreen extends StatelessWidget {
                   builder: (context, state) {
                     if (state is AuthLoading) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is AuthError) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
-                      });
-                    } else if (state is ConnectionError) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
-                      });
                     }
                     return CustomButton(
                       onPressed: () {
@@ -90,14 +96,24 @@ class LoginScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                GestureDetector(
-                  onTap: () {
-                    context.push('/');
-                  },
-                  child: const Text(
-                    'ليس لديك حساب؟',
-                    textAlign: TextAlign.center,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('ليس لديك حساب؟'),
+                    GestureDetector(
+                      onTap: () {
+                        context.push('/');
+                      },
+                      child: const Text(
+                        'انشاء حساب',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppTheme.mainColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -108,7 +124,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   String? _validatePhoneNumber(String? value) {
-    // Update the regex to match phone numbers starting with 91, 92, 93, or 94, followed by 7 digits
+    // Validate phone number starting with 91, 92, 93, or 94 followed by 7 digits
     final regex = RegExp(r'^(91|92|93|94)\d{7}$');
 
     if (value == null || value.isEmpty) {
@@ -118,7 +134,6 @@ class LoginScreen extends StatelessWidget {
     }
     return null;
   }
-
 
   void _onLoginPressed(
       BuildContext context,

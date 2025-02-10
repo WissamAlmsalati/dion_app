@@ -1,4 +1,3 @@
-// app_theme.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,24 +19,24 @@ class AppTheme {
         centerTitle: true,
         backgroundColor: defaultFontColor,
         elevation: 0,
-        titleTextStyle: GoogleFonts.titilliumWeb(
+        titleTextStyle: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: textColor), // Set leading icon color
       ),
       textTheme: TextTheme(
-        titleLarge: GoogleFonts.titilliumWeb(
+        titleLarge: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
-        bodyLarge: GoogleFonts.titilliumWeb(
+        bodyLarge: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 18,
         ),
-        bodyMedium: GoogleFonts.titilliumWeb(
+        bodyMedium: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 16,
         ),
@@ -53,7 +52,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: mainColor,
-          textStyle: GoogleFonts.titilliumWeb(
+          textStyle: GoogleFonts.tajawal(
             fontSize: 16,
             color: textColor,
             fontWeight: FontWeight.bold,
@@ -80,11 +79,11 @@ class AppTheme {
           borderRadius: BorderRadius.circular(1),
           borderSide: BorderSide(color: mainColor, width: 2),
         ),
-        labelStyle: GoogleFonts.titilliumWeb(
+        labelStyle: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 16,
         ),
-        hintStyle: GoogleFonts.titilliumWeb(
+        hintStyle: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 14,
         ),
@@ -93,11 +92,11 @@ class AppTheme {
         backgroundColor: Colors.white,
         selectedItemColor: mainColor,
         unselectedItemColor: textColor,
-        selectedLabelStyle: GoogleFonts.titilliumWeb(
+        selectedLabelStyle: GoogleFonts.tajawal(
           fontSize: 14,
           fontWeight: FontWeight.bold,
         ),
-        unselectedLabelStyle: GoogleFonts.titilliumWeb(
+        unselectedLabelStyle: GoogleFonts.tajawal(
           fontSize: 12,
         ),
         showUnselectedLabels: true,

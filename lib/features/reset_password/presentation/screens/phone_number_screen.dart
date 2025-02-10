@@ -1,7 +1,10 @@
+import 'package:dion_app/core/widgets/custom_button.dart';
+import 'package:dion_app/core/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dion_app/features/reset_password/presentation/cubit/reset_password_bloc.dart';
 import 'package:dion_app/features/reset_password/presentation/cubit/reset_password_state.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class PhoneNumberScreen extends StatelessWidget {
@@ -30,17 +33,30 @@ class PhoneNumberScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextFormField(
+
+                      SvgPicture.asset(
+                        'assets/images/registerImage.svg',
+                        height: MediaQuery.sizeOf(context).height * 0.2,
+                      ),
+
+                      SizedBox(height: MediaQuery.sizeOf(context).height * 0.1),
+
+
+                       CustomTextField(
                         controller: _phoneController,
-                        decoration: const InputDecoration(
-                          labelText: 'رقم الهاتف',
-                          border: OutlineInputBorder(),
-                        ),
+                        labelText: 'رقم الهاتف',
+                        hintText: '910000000',
+                        prefixIcon: Icons.phone,
                         keyboardType: TextInputType.phone,
                         validator: _validatePhoneNumber,
+                        maxLength: 9,
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
+                      SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.02,
+                      ),
+                      
+
+                      CustomButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             final phoneNumber = _phoneController.text.trim();
@@ -49,8 +65,11 @@ class PhoneNumberScreen extends StatelessWidget {
                             // If validation fails, a Snackbar will show error
                           }
                         },
-                        child: const Text('إرسال OTP'),
+                        text: 'التالي',
                       ),
+
+                      const SizedBox(height: 20),
+                      
                     ],
                   ),
                 ),
@@ -65,7 +84,10 @@ class PhoneNumberScreen extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('تم إرسال OTP بنجاح!')),
             );
-            context.push("/reset_pass_otp_screen");
+context.push(
+  "/reset_pass_otp_screen",
+  extra: {'phoneNumber':_phoneController.text }, // Pass the phone number
+);
           } else if (state is SendOtpFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('خطأ: ${state.error}')),

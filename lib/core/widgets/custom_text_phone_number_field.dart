@@ -9,50 +9,55 @@ class CustomPhoneTextField extends StatelessWidget {
   final FocusNode? focusNode;
 
   const CustomPhoneTextField({
-    super.key,
+    Key? key,
     required this.controller,
     this.onChanged,
     this.validator,
     this.focusNode,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        focusNode: focusNode,
-        keyboardType: TextInputType.phone,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-        decoration: InputDecoration(
-          hintText: 'أدخل رقم الهاتف',
-          hintStyle: const TextStyle(color: Colors.grey),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: AppTheme.mainColor, width: 2.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          suffix: const Text(
-            '  218+ ',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      maxLength: 9,
+      keyboardType: TextInputType.phone,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      style: Theme.of(context).textTheme.bodyLarge,
+      decoration: InputDecoration(
+        // The hint for the phone number.
+        hintText: '910000000',
+        hintStyle: const TextStyle(color: Colors.grey),
+        // Use the prefix property to display the country code inside the same container.
+        suffix: Container(
+          width: 60,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            '218+',
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
-        textDirection: TextDirection.ltr,
-        textAlign: TextAlign.left,
-        onChanged: onChanged,
-        validator: validator,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.grey, width: 1.5),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.grey, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide:
+              const BorderSide(color: AppTheme.mainColor, width: 2.0),
+        ),
+        counterText: '', // Hides the built-in counter.
       ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.left,
+      onChanged: onChanged,
+      validator: validator,
     );
   }
 }

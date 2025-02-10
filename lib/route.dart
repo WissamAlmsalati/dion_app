@@ -1,3 +1,4 @@
+import 'package:dion_app/features/home_screen/view/home_screen.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/screens/profile_screen.dart';
 import 'package:dion_app/features/reset_password/presentation/screens/phone_number_screen.dart';
 import 'package:dion_app/features/reset_password/presentation/screens/reset_password_screen.dart';
@@ -45,6 +46,9 @@ class AppRouter {
           return MainScreen();
         },
       ),
+      GoRoute(path: '/home_screen', builder: (context, state) {
+        return HomeScreen();
+      }),
       GoRoute(
         path: '/otp',
         builder: (context, state) {
@@ -65,13 +69,20 @@ class AppRouter {
           return PhoneNumberScreen();
         },
       ),
-      GoRoute(
-        path: "/reset_pass_otp_screen",
-        builder: (context, state) {
-          return ResetPasswordScreen();
-        },
-      ),
-      // Note the leading slash below.
+GoRoute(
+  path: "/reset_pass_otp_screen",
+  builder: (context, state) {
+    final extra = state.extra;
+    String phoneNumber = '';
+
+    if (extra is Map<String, dynamic> && extra.containsKey('phoneNumber')) {
+      phoneNumber = extra['phoneNumber'] as String? ?? '';
+    }
+
+    return ResetPasswordScreen(phoneNumber: phoneNumber);
+  },
+),
+
       GoRoute(
         path: '/profile_screen',
         builder: (context, state) {
