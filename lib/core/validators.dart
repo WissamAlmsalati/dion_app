@@ -26,3 +26,10 @@ String? validatePassword(String? value) {
   }
   return null;
 }
+
+String? validateOtp(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'رمز التحقق مطلوب';
+  }
+  return null;
+}

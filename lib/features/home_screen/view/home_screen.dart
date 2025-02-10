@@ -1,14 +1,32 @@
+import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
+import 'package:dion_app/features/home_screen/view/widget/card_widget.dart';
+import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cubit.dart';
+import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../repository/loaning_repository.dart';
+import '../../../core/widgets/custom_dialog.dart';
 import '../viewmodel/loaning_bloc.dart';
 import '../../authintication_feature/viewmodel/auth_bloc.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final profileCubit = context.read<ProfileCubit>();
+    if (profileCubit.state is ProfileInitial) {
+      profileCubit.fetchProfileData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,27 +34,31 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('ديون'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthenticationBloc>().add(LogoutEvent());
-            },
-          ),
-        ],
+        leading: IconButton(
+          onPressed: () {
+            context.push("/profile_screen");
+          },
+          icon: Icon(Icons.person, color: AppTheme.textColor),
+        ),
       ),
       body: MultiBlocListener(
         listeners: [
+          // Listen for authentication state changes.
           BlocListener<AuthenticationBloc, AuthState>(
             listener: (context, state) {
               if (state is Unauthenticated || state is LogOutSucess) {
                 context.go('/login');
+              } else if (state is LogOutError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: ${state.message}')),
+                );
               }
             },
           ),
-          BlocListener<AuthenticationBloc, AuthState>(
+          // Listen for loaning errors.
+          BlocListener<LoaningBloc, LoaningState>(
             listener: (context, state) {
-              if (state is LogOutError) {
+              if (state is LoaningError) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Error: ${state.message}')),
                 );
@@ -49,146 +71,119 @@ class HomeScreen extends StatelessWidget {
             if (state is LoaningLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is LoaningLoaded) {
-              return Stack(
-                children: [
-                  Positioned(
-                    top: 0,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      decoration: BoxDecoration(
-                        color: AppTheme.mainColor,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(30),
-                          bottomRight: Radius.circular(30),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Positioned(
-                    top: 0,
-                    right: 20,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '"اهلا "اسم المستخدم"',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'الديون المستحقة',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 100.0),
-                        child: Card(
-                          color: Colors.white,
-                          margin: const EdgeInsets.all(16),
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
+              return RefreshIndicator(
+                onRefresh: () async {
+                  // Refresh loaning data.
+                  context.read<LoaningBloc>().add(FetchLoaningData());
+                  // Optionally, refresh the profile data as well.
+                  context.read<ProfileCubit>().fetchProfileData();
+                },
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Display the username or loading indicator using ProfileCubit.
+                          BlocBuilder<ProfileCubit, ProfileState>(
+                            builder: (context, profileState) {
+                              if (profileState is ProfileLoading) {
+                                return Row(
                                   children: [
-                                     Text(
-                                      "عدد المقترضين",
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
+                                    SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                            AppTheme.textColor),
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(width: 8),
                                     Text(
-                                      "${state.loaningData.borrowersCount}",
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 16),
-Text(
-  "المبالغ المستحقة",
-  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-    fontSize: 12,
-    fontWeight: FontWeight.bold,
-  ),
-),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "${state.loaningData.totalSettledDebtors}",
-                                      style: const TextStyle(fontSize: 16),
+                                      'تحميل...',
+                                      style: TextStyle(
+                                        color: AppTheme.textColor,
+                                        fontSize: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.fontSize ??
+                                            24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
-                                ),
-
-
-
-
-                                const SizedBox(width: 20),
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                     Text(
-                                      "عدد المقرضين",
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "${state.loaningData.lendersCount}",
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 16),
-                                     Text(
-                                      "المبالغ المستحقة",
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "${state.loaningData.totalSettledDebts}",
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                );
+                              } else if (profileState is ProfileLoaded) {
+                                final username = profileState.profile.username;
+                                return Text(
+                                  'أهلا ${username.isNotEmpty ? username : "المستخدم"}',
+                                  style: TextStyle(
+                                    color: AppTheme.textColor,
+                                    fontSize: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.fontSize ??
+                                        24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              } else if (profileState is ProfileError) {
+                                return Text(
+                                  'Error: ${profileState.message}',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              } else {
+                                return Text(
+                                  'أهلا المستخدم',
+                                  style: TextStyle(
+                                    color: AppTheme.textColor,
+                                    fontSize: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.fontSize ??
+                                        24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'الديون المستحقة',
+                            style: TextStyle(
+                              color: AppTheme.textColor,
+                              fontSize: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.fontSize ??
+                                  18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    Center(
+                      child: CardWidget(
+                        state: state.loaningData,
+                      ),
+                    ),
+                  ],
+                ),
               );
-            } else if (state is LoaningError) {
-              return Center(child: Text('Error: ${state.message}'));
             } else {
-              return const Center(
-                  child: Text('Press the button to fetch data'));
+              return const SizedBox();
             }
           },
         ),

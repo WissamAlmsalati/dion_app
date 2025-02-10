@@ -1,112 +1,163 @@
-import 'package:dion_app/core/widgets/custom_button.dart';
-import 'package:dion_app/core/widgets/custom_text_field.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dion_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../../../../core/validators.dart';
-import '../../models/user_model.dart';
-import '../../services/auth_service.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
 import '../../viewmodel/auth_bloc.dart';
+import '../../repository/auth_repository.dart';
+import '../../models/user_model.dart'; // Ensure this import is present
 
 class SignUpScreen extends StatelessWidget {
   final String phoneNumber;
+  final int otp;
+  final String expiresAt;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  const SignUpScreen({super.key, required this.phoneNumber});
+  SignUpScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.otp,
+    required this.expiresAt,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _name = TextEditingController();
-    final TextEditingController _email = TextEditingController();
-    final TextEditingController _password = TextEditingController();
-    final _formKey = GlobalKey<FormState>(); // Add a form key for validation
-
     return BlocProvider(
-      create: (BuildContext context) {
-        return AuthenticationBloc(
-          authService: AuthService(
-          ),
-         );
-      },
+      create: (context) => AuthenticationBloc(authRepository: AuthRepository()),
       child: Scaffold(
-        appBar: AppBar(
-            title: const Text('انشاء حساب جديد',
-                style: TextStyle(color: Colors.white, fontSize: 24)),
-        ),
-        body: BlocConsumer<AuthenticationBloc, AuthState>(
-          builder: (BuildContext context, state) {
-            if (state is AuthLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return Form(
-              key: _formKey, // Assign the form key
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.sizeOf(context).width * 0.1,
+
+
+              left: MediaQuery.sizeOf(context).width * 0.1,
+                right: MediaQuery.sizeOf(context).width * 0.1,
+              ),
+              child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
+                    Text("مرحبا",style: Theme.of(context).textTheme.displayMedium,),
+                    Text(
+                      "يرجي انشاء حساب لاستخدام التطبيق",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontSize: 18.0,
+                            color: AppTheme.textColor.withOpacity(0.5),
+                          ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.05,
+                    ),
+                    SvgPicture.asset("assets/images/registerImage.svg"),
                     CustomTextField(
-                      controller: _name,
+                      controller: _nameController,
                       labelText: 'الاسم',
-                      hintText: 'يرجى إدخال اسمك',
-                      prefixIcon: Icons.person,
-                      keyboardType: TextInputType.text,
-                      validator: validateName, // Pass the validator
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'يرجى إدخال الاسم';
+                        }
+                        return null;
+                      }, maxLength: 20,
                     ),
                     CustomTextField(
-                      controller: _email,
+                      controller: _emailController,
                       labelText: 'البريد الإلكتروني',
-                      hintText: 'أدخل بريدك الإلكتروني',
-                      prefixIcon: Icons.email,
                       keyboardType: TextInputType.emailAddress,
-                      validator: validateEmail, // Pass the validator
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'يرجى إدخال البريد الإلكتروني';
+                        }
+                        return null;
+                      }, maxLength: 20,
                     ),
                     CustomTextField(
-                      controller: _password,
+                      controller: _passwordController,
                       labelText: 'كلمة المرور',
-                      hintText: 'يرجى إدخال كلمة المرور',
-                      prefixIcon: Icons.lock,
                       obscureText: true,
-                      validator: validatePassword, // Pass the validator
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'يرجى إدخال كلمة المرور';
+                        }
+                        return null;
+                      }, maxLength: 8,
                     ),
-                    Text('رقم الهاتف هو: $phoneNumber'),
-                    CustomButton(
-                      onPressed: () {
-                        print(phoneNumber  + "phone number");
+                    CustomTextField(
 
-                        // Validate the form and submit the SignUpEvent to the Bloc if valid.
-                        if (_formKey.currentState!.validate()) {
-                          context.read<AuthenticationBloc>().add(SignUpEvent(
-                                user: User(
-                                  name: _name.text,
-                                  email: _email.text,
-                                  password: _password.text,
-                                  phoneNumber: phoneNumber,
-                                  fcmToken: '',
-                                ),
-                              ));
+                      controller: _otpController,
+                      labelText: 'رمز التحقق',
+                      hintText: '123456',
+                      prefixIcon: Icons.password_rounded,
+                      obscureText: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'يرجى إدخال رمز التحقق';
+                        }
+                        return null;
+                      }, maxLength: 6,
+                    ),
+                    const SizedBox(height: 20),
+                    // Text('رقم الهاتف هو: $phoneNumber'),
+                    const SizedBox(height: 20),
+                    BlocConsumer<AuthenticationBloc, AuthState>(
+                      listener: (context, state) {
+                        if (state is SignUpSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          );
+                          context.go('/login');
+                        } else if (state is AuthError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (state is ConnectionError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
                         }
                       },
-                      text: "تسجيل",
+                      builder: (context, state) {
+                        return CustomButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              final user = User(
+                                name: _nameController.text,
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                                phoneNumber: phoneNumber,
+                                fcmToken: 'dummy_fcm_token',
+                                otpCode: _otpController.text,
+                                otpId: otp.toString(),
+                              );
+                              context
+                                  .read<AuthenticationBloc>()
+                                  .add(SignUpEvent(user: user));
+                            }
+                          },
+                          text:
+                              state is AuthLoading ? "جاري التسجيل..." : "تسجيل",
+                          isLoading: state is AuthLoading,
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
-            );
-          },
-          listener: (context, state) {
-            if (state is AuthError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-            }
-            if (state is SignUpSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('تم تسجيل الحساب بنجاح!')),
-              );
-              Navigator.pushNamed(context, '/login');
-            }
-          },
+            ),
+          ),
         ),
       ),
     );

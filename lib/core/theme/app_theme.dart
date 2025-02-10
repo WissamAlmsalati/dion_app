@@ -2,39 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color mainColor = Color(0xFF6361D4);
+  static const Color mainColor = Color(0xFFFB847C);
+  static const Color defaultFontColor = Color(0xFFEFF5FE); // Default font color
+  static const Color textColor = Color(0xFF011A51);
 
   static ThemeData get purpleTheme {
     return ThemeData(
-      primaryColor: mainColor,
-      scaffoldBackgroundColor: Colors.white, // Set background color to white
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: mainColor,
+        primary: mainColor,
+        secondary: Colors.white,
+      ),
+      useMaterial3: true,
+      scaffoldBackgroundColor: defaultFontColor,
       appBarTheme: AppBarTheme(
-        backgroundColor: mainColor,
+        centerTitle: true,
+        backgroundColor: defaultFontColor,
         elevation: 0,
-        titleTextStyle: GoogleFonts.changa(
-          color: Colors.white,
+        titleTextStyle: GoogleFonts.tajawal(
+          color: textColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: textColor), // Set leading icon color
       ),
       textTheme: TextTheme(
-        titleLarge: GoogleFonts.changa(
-          color: mainColor,
+        titleLarge: GoogleFonts.tajawal(
+          color: textColor,
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
-        bodyLarge: GoogleFonts.changa(
-          color: mainColor,
+        bodyLarge: GoogleFonts.tajawal(
+          color: textColor,
           fontSize: 18,
         ),
-        bodyMedium: GoogleFonts.changa(
-          color: mainColor.withOpacity(0.7),
+        bodyMedium: GoogleFonts.tajawal(
+          color: textColor,
           fontSize: 16,
         ),
       ),
       buttonTheme: ButtonThemeData(
-        buttonColor: mainColor,
+        buttonColor: Colors.white,
         textTheme: ButtonTextTheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -42,32 +50,56 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white, backgroundColor: mainColor,
-          textStyle: GoogleFonts.changa(
+          foregroundColor: Colors.white,
+          backgroundColor: mainColor,
+          textStyle: GoogleFonts.tajawal(
             fontSize: 16,
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          elevation: 4,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: defaultFontColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: mainColor.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(1),
+          borderSide: BorderSide(color: textColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(1),
+          borderSide: BorderSide(color: textColor.withOpacity(0.5), width: 2),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: mainColor, width: 2),
+          borderRadius: BorderRadius.circular(1),
+          borderSide: BorderSide(color: mainColor, width: 2),
         ),
-        labelStyle: GoogleFonts.changa(
-          color: mainColor.withOpacity(0.6),
+        labelStyle: GoogleFonts.tajawal(
+          color: textColor,
+          fontSize: 16,
         ),
-        hintStyle: GoogleFonts.changa(
-          color: mainColor.withOpacity(0.4),
+        hintStyle: GoogleFonts.tajawal(
+          color: textColor,
+          fontSize: 14,
         ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Colors.white,
+        selectedItemColor: mainColor,
+        unselectedItemColor: textColor,
+        selectedLabelStyle: GoogleFonts.tajawal(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: GoogleFonts.tajawal(
+          fontSize: 12,
+        ),
+        showUnselectedLabels: true,
       ),
     );
   }

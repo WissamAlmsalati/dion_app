@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -10,7 +11,7 @@ class CustomButton extends StatelessWidget {
   final bool isLoading;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.text,
     this.backgroundColor,
@@ -18,13 +19,13 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width ?? double.infinity, // Default to full width
-      height: height ?? 50, // Default height
+      width: width ?? double.infinity,
+      height: height ?? MediaQuery.sizeOf(context).height * 0.05,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -33,16 +34,21 @@ class CustomButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
+          alignment: Alignment.center, // Centers the child widget
         ),
         child: isLoading
             ? const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               )
-            : Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            : Center(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppTheme.defaultFontColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
       ),

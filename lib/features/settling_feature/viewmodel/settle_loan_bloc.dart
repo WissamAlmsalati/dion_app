@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../loans_list/repostry/loans_repostry.dart';
+import '../../loans_list/domain/repostry/loans_repostry.dart';
 import '../reposittory/settling_reposotory.dart';
 
 part 'settle_loan_event.dart';

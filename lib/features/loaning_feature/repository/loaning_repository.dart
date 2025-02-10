@@ -21,12 +21,17 @@ class LoaningRepository {
       },
       body: json.encode(loaningModel.toJson()),
     );
+
     print(token);
     print(response.statusCode);
     print(response.body);
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to create loan: ${response.reasonPhrase}');
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final errorMessage = responseData['message'] ?? 'حدث خطأ غير متوقع.';
+      throw errorMessage; // Throw only the error message
     }
   }
+
+
 }

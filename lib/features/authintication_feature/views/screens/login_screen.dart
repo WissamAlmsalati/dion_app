@@ -1,88 +1,122 @@
-import 'package:dion_app/core/widgets/custom_button.dart';
-import 'package:dion_app/core/widgets/custom_text_field.dart';
-import 'package:dion_app/features/authintication_feature/viewmodel/auth_bloc.dart';
+import 'package:dion_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
+import '../../viewmodel/auth_bloc.dart';
+import '../../repository/auth_repository.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  LoginScreen({super.key});
+
+  final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final _phoneController = TextEditingController();
-    final _passwordController = TextEditingController();
-    final _formKey = GlobalKey<FormState>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'تسجيل الدخول',
           style: TextStyle(
-            color: Colors.white,
             fontSize: 24,
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              CustomTextField(
-                controller: _phoneController,
-                labelText: 'رقم الهاتف',
-                hintText: '910000000',
-                prefixIcon: Icons.phone,
-                keyboardType: TextInputType.phone,
-                validator: _validatePhoneNumber,
-              ),
-              CustomTextField(
-                controller: _passwordController,
-                labelText: 'كلمة المرور',
-                hintText: 'أدخل كلمة المرور',
-                prefixIcon: Icons.lock,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
-                validator: _validatePassword,
-              ),
-              const SizedBox(height: 20),
-              BlocConsumer<AuthenticationBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is Authenticated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تم تسجيل الدخول بنجاح!')),
-                    );
-                    context.go('/main_screen');
-                  } else if (state is AuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
-                    print(state.message);
-                  }
-                },
-                builder: (context, state) {
-                  return CustomButton(
+      body: BlocListener<AuthenticationBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError || state is ConnectionError) {
+            final message = state is AuthError ? state.message : (state as ConnectionError).message;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+            });
+          }
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SvgPicture.asset(
+                  "assets/images/registerImage.svg",
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  width: 100,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.06),
+                CustomTextField(
+                  controller: _phoneController,
+                  labelText: 'رقم الهاتف',
+                  hintText: '910000000',
+                  prefixIcon: Icons.phone,
+                  keyboardType: TextInputType.phone,
+                  validator: _validatePhoneNumber,
+                  maxLength: 9,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                CustomTextField(
+                  controller: _passwordController,
+                  labelText: 'كلمة المرور',
+                  hintText: 'أدخل كلمة المرور',
+                  prefixIcon: Icons.lock,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                  validator: _validatePassword,
+                  maxLength: 8,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _onLoginPressed(context, _phoneController, _passwordController);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('يرجى إدخال تفاصيل صحيحة')),
-                        );
-                      }
+                      context.push("/reset_pass_phone_screen");
                     },
-                    text: "تسجيل الدخول",
-                    isLoading: state is AuthLoading,
-                  );
-                },
-              ),
-              Text('ليس لديك حساب؟'),
-
-            ],
-
+                    child: const Text('نسيت كلمة المرور؟'),
+                  ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                BlocBuilder<AuthenticationBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return CustomButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _onLoginPressed(
+                              context, _phoneController, _passwordController);
+                        }
+                      },
+                      text: 'تسجيل الدخول',
+                    );
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('ليس لديك حساب؟'),
+                    GestureDetector(
+                      onTap: () {
+                        context.push('/');
+                      },
+                      child: const Text(
+                        'انشاء حساب',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppTheme.mainColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -90,20 +124,26 @@ class LoginScreen extends StatelessWidget {
   }
 
   String? _validatePhoneNumber(String? value) {
-    final regex = RegExp(r'^(9[1-9]\d{7})$');
+    // Validate phone number starting with 91, 92, 93, or 94 followed by 7 digits
+    final regex = RegExp(r'^(91|92|93|94)\d{7}$');
+
     if (value == null || value.isEmpty) {
       return 'رقم الهاتف مطلوب';
     } else if (!regex.hasMatch(value)) {
-      return 'رقم الهاتف يجب ان يبدا ب 91 او 92 او 94 و 8 ارقام';
+      return 'رقم الهاتف يجب أن يبدأ ب 91 أو 92 أو 93 أو 94 ويجب أن يتكون من 9 أرقام';
     }
     return null;
   }
 
-  void _onLoginPressed(BuildContext context, TextEditingController phoneController, TextEditingController passwordController) {
-    final phoneNumber = '0' + phoneController.text;
+  void _onLoginPressed(
+      BuildContext context,
+      TextEditingController phoneController,
+      TextEditingController passwordController) {
+    final phoneNumber = phoneController.text;
     final password = passwordController.text;
-    context.read<AuthenticationBloc>().add(LoginEvent(
-        phoneNumber: phoneNumber, password: password));
+    context
+        .read<AuthenticationBloc>()
+        .add(LoginEvent(phoneNumber: phoneNumber, password: password));
   }
 
   String? _validatePassword(String? value) {

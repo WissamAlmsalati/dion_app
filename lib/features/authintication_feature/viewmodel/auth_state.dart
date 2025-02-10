@@ -31,7 +31,16 @@ class AuthError extends AuthState {
   List<Object?> get props => [message];
 }
 
-class OtpSent extends AuthState {}
+class AuthChecking extends AuthState {}
+class OtpSent extends AuthState {
+  final int otp;
+  final String expiresAt;
+
+  const OtpSent({required this.otp, required this.expiresAt});
+
+  @override
+  List<Object?> get props => [otp, expiresAt];
+}
 
 class OtpVerified extends AuthState {}
 
@@ -50,6 +59,15 @@ class LogOutError extends AuthState {
   final String message;
 
   const LogOutError({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ConnectionError extends AuthState {
+  final String message;
+
+  const ConnectionError({required this.message});
 
   @override
   List<Object?> get props => [message];

@@ -5,7 +5,7 @@ class AuthService {
 
   Future<String?> getToken() async {
     try {
-      return await _storage.read(key: 'auth_token');
+      return await _storage.read(key: 'AuthToken');
     } catch (e) {
       throw Exception('Failed to read token: ${e.toString()}');
     }
@@ -13,7 +13,7 @@ class AuthService {
 
   Future<void> saveToken(String token) async {
     try {
-      await _storage.write(key: 'auth_token', value: token);
+      await _storage.write(key: 'AuthToken', value: token);
     } catch (e) {
       throw Exception('Failed to save token: ${e.toString()}');
     }
@@ -21,7 +21,7 @@ class AuthService {
 
   Future<void> clearToken() async {
     try {
-      await _storage.delete(key: 'auth_token');
+      await _storage.delete(key: 'AuthToken');
     } catch (e) {
       throw Exception('Failed to clear token: ${e.toString()}');
     }

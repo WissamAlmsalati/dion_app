@@ -27,4 +27,5 @@ class CreateLoanBloc extends Bloc<CreateLoanEvent, CreateLoanState> {
       emit(CreateLoanError(message: e.toString()));
     }
   }
+
 }
