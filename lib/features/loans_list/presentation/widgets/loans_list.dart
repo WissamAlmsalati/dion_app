@@ -1,75 +1,123 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Import your authentication and repository classes.
 import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/theme/app_theme.dart';
-import '../../models/loan.dart';
-import '../../viewmodel/get_list_loan/get_list_of_loans_bloc.dart';
-import '../views/loan_detail.dart';
+// Import your Bloc, events, and states.
+import 'package:dion_app/features/loans_list/presentation/get_list_loan/get_list_of_loans_bloc.dart';
+import 'package:dion_app/features/loans_list/models/loan.dart';
 
-class LoanListItem extends StatelessWidget {
-  final Loan loan;
+// Import your LoanListItem widget.
+import 'package:dion_app/features/loans_list/presentation/widgets/loan_item.dart';
 
-  const LoanListItem({Key? key, required this.loan}) : super(key: key);
+/// This screen shows two tabs, one for "Borrowing" and one for "Lending" loans.
+class LoanTabsScreen extends StatelessWidget {
+  const LoanTabsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: CircleAvatar(
-          backgroundColor: Colors.blueGrey.shade100,
-          child: Icon(
-            Icons.monetization_on,
-            color: Colors.blueGrey.shade800,
-          ),
-        ),
-        title: Text(
-          loan.deptName,
-          style: GoogleFonts.roboto(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: Colors.blueGrey.shade900,
-          ),
-        ),
-        subtitle: Text(
-          'القيمة: ${loan.amount.toStringAsFixed(2)} د.ل',
-          style: GoogleFonts.roboto(
-            fontSize: 14,
-            color: Colors.blueGrey.shade700,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.blueGrey.shade700,
-        ),
-        onTap: () async {
-          AuthService authService = AuthService();
-          final token = await authService.getToken();
+    // Instantiate the AuthService once and pass it to the repository.
+    final authService = AuthService();
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BlocProvider.value(
-                value: BlocProvider.of<LoanBloc>(context),
-                child: LoanDetailScreen(loanId: loan.id),
-              ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('الديون'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Borrowing'),
+              Tab(text: 'Lending'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // First Tab: Borrowing Loans
+            BlocProvider(
+              create: (context) => LoanBloc(
+                loanRepository: LoanRepository(authService: authService),
+              )..add(const LoadLoans(page: 1, loanType: 'Borrowing')),
+              child: const LoanListView(loanType: 'Borrowing'),
             ),
-          ).then((result) {
-            if (result == true) {
-              context.read<LoanBloc>().add(const LoadLoans(page: 1, loanType: 'Borrowing')); // Adjust if needed
-            }
-          });
-        },
+            // Second Tab: Lending Loans
+            BlocProvider(
+              create: (context) => LoanBloc(
+                loanRepository: LoanRepository(authService: authService),
+              )..add(const LoadLoans(page: 1, loanType: 'Lending')),
+              child: const LoanListView(loanType: 'Lending'),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// A widget that builds the loan list based on the Bloc state.
+/// It receives the `loanType` parameter and passes it along to [LoanList].
+class LoanListView extends StatelessWidget {
+  final String loanType;
+  const LoanListView({Key? key, required this.loanType}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoanBloc, LoanState>(
+      builder: (context, state) {
+        if (state is LoanLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is LoanLoaded) {
+          return LoanList(loans: state.loans, loanType: loanType);
+        } else if (state is LoanError) {
+          return Center(
+            child: Text(
+              state.message,
+              style: GoogleFonts.roboto(fontSize: 16),
+            ),
+          );
+        }
+        return Container();
+      },
+    );
+  }
+}
+
+/// A widget that builds a [ListView] of loans.
+/// It passes the [loanType] down to each [LoanListItem].
+class LoanList extends StatelessWidget {
+  final List<Loan> loans;
+  final String loanType;
+  const LoanList({Key? key, required this.loans, required this.loanType})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (loans.isEmpty) {
+      return Center(
+        child: Text(
+          'لا توجد ديون',
+          style: GoogleFonts.roboto(
+            fontSize: 18,
+            color: Colors.grey.shade600,
+          ),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      itemCount: loans.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final loan = loans[index];
+        return LoanListItem(
+          loan: loan,
+          loadType: loanType, // Passing the loan type here.
+        );
+      },
     );
   }
 }

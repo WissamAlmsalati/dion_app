@@ -15,7 +15,7 @@ import 'features/loaning_feature/repository/loaning_repository.dart';
 import 'features/settling_feature/reposittory/settling_reposotory.dart';
 import 'features/settling_feature/viewmodel/settle_loan_bloc.dart';
 import 'features/loans_list/domain/repostry/loans_repostry.dart';
-import 'features/loans_list/viewmodel/get_list_loan/get_list_of_loans_bloc.dart';
+import 'features/loans_list/presentation/get_list_loan/get_list_of_loans_bloc.dart';
 import 'route.dart';
 
 

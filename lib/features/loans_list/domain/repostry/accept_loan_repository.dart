@@ -28,7 +28,7 @@ class AcceptLoanRepository {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final responseBody = json.decode(response.body);
-      return responseBody['message']; // Return the success message from the backend
+      return responseBody['message'];
     } else {
       final responseBody = json.decode(response.body);
       if (responseBody is Map && responseBody.containsKey('message')) {
