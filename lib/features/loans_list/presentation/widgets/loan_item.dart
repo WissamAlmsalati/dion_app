@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../models/loan.dart';
-import '../views/loan_detail.dart';
+import '../../data/models/loan.dart';
+import '../../../loand_detail_feature/view/loan_detail.dart';
 
 class LoanListItem extends StatelessWidget {
   final String loadType;
@@ -66,9 +66,11 @@ class LoanListItem extends StatelessWidget {
   Color setColorByType(String loanStatus, Color defaultColor) {
     switch (loanStatus) {
       case 'Approved':
-        return Colors.green.shade100;
+        return Colors.yellow.shade100;
       case 'Rejected':
         return Colors.red.shade100;
+      case 'Settled':
+        return Colors.green.shade100;
       default:
         return defaultColor;
     }

@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../loans_list/domain/repostry/loans_repostry.dart';
-import '../reposittory/settling_reposotory.dart';
+import '../../../loans_list/domain/repostry/loans_repostry.dart';
 
 part 'settle_loan_event.dart';
 part 'settle_loan_state.dart';
@@ -17,15 +17,17 @@ class SettleLoanBloc extends Bloc<SettleLoanEvent, SettleLoanState> {
     on<RejectLoan>(_onRejectLoan);
   }
 
-  Future<void> _onSettleLoan(SettleLoan event, Emitter<SettleLoanState> emit) async {
-    emit(SettleLoanLoading());
-    try {
-      await settlingRepository.settleLoan(event.loanId, event.amount);
-      emit(SettleLoanSuccess());
-    } catch (e) {
-      emit(SettleLoanFailure(error: e.toString()));
-    }
+Future<void> _onSettleLoan(SettleLoan event, Emitter<SettleLoanState> emit) async {
+  emit(SettleLoanLoading());
+  try {
+    // Get the server message.
+    final message = await settlingRepository.settleLoan(event.loanId, event.amount);
+    emit(SettleLoanSuccess(message: message));
+  } catch (e) {
+    emit(SettleLoanFailure(error: e.toString()));
   }
+}
+
 
   Future<void> _onAcceptLoan(AcceptLoan event, Emitter<SettleLoanState> emit) async {
     emit(AcceptLoanLoading());

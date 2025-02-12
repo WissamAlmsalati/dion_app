@@ -113,14 +113,7 @@ class SignUpScreen extends StatelessWidget {
                             SnackBar(content: Text(state.message)),
                           );
                           context.go('/login');
-                        } else if (state is AuthError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.message),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else if (state is ConnectionError) {
+                        }  else if (state is ConnectionError) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(state.message),

@@ -1,4 +1,4 @@
-import 'package:dion_app/features/loans_list/data/loan_detail_repository.dart';
+import 'package:dion_app/features/loand_detail_feature/repository/loan_detail_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'loan_detail_event.dart';
 import 'loan_detail_state.dart';

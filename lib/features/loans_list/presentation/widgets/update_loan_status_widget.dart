@@ -1,5 +1,7 @@
-import 'package:dion_app/features/loans_list/models/loan.dart';
-import 'package:dion_app/features/loans_list/presentation/loan_update_status/update_loan_status_bloc.dart';
+import 'package:dion_app/features/loans_list/data/models/loan.dart';
+import 'package:dion_app/features/loand_detail_feature/loan_update_status/update_loan_status_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/bloc/loan_detail_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/bloc/loan_detail_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,25 +20,36 @@ class UpdateLoanStatusWidget extends StatelessWidget {
     return BlocConsumer<LoanStatusBloc, LoanStatusState>(
       listener: (context, state) {
         if (state is LoanStatusFailure) {
-          // Show an error message from the server in a SnackBar.
+          // Show error message in a red SnackBar.
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.error),
               backgroundColor: Colors.red,
             ),
           );
+        } else if (state is LoanStatusSuccess) {
+          // Show success message in a SnackBar.
+          // Here we use the returned message to choose a color.
+          final snackBarColor = state.message.contains("Rejected") ? Colors.red : Colors.green;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: snackBarColor,
+            ),
+          );
+          // Refresh the loan details screen by dispatching a new load event.
+          context.read<LoanDetailBloc>().add(LoadLoanDetail(loanId: loan.id));
         }
       },
       builder: (context, statusState) {
-        // When the bloc is loading, show a progress indicator.
         if (statusState is LoanStatusLoading) {
           return const Center(
             child: CircularProgressIndicator(color: Colors.blue),
           );
         }
 
-        // If the loan is in "Waiting" status and the bloc is in its initial state,
-        // display the Accept/Reject buttons.
+        // Display Accept/Reject buttons only if the loan is in a "Waiting" state
+        // and the bloc is in its initial state.
         if (loanType == "Borrowing" &&
             loan.loanStatus == "Waiting" &&
             statusState is LoanStatusInitial) {
@@ -45,7 +58,7 @@ class UpdateLoanStatusWidget extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   context.read<LoanStatusBloc>().add(
-                        UpdateLoanStatus(loanId: loan.id, loanStatus: 1),
+                        UpdateLoanStatus(loanId: loan.id, loanStatus: "Approved"),
                       );
                 },
                 style: ElevatedButton.styleFrom(
@@ -68,7 +81,7 @@ class UpdateLoanStatusWidget extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   context.read<LoanStatusBloc>().add(
-                        UpdateLoanStatus(loanId: loan.id, loanStatus: 2),
+                        UpdateLoanStatus(loanId: loan.id, loanStatus: "Rejected"),
                       );
                 },
                 style: ElevatedButton.styleFrom(
@@ -91,8 +104,8 @@ class UpdateLoanStatusWidget extends StatelessWidget {
           );
         }
 
-        // Show success messages based on the updated loan status.
-        if (statusState is LoanStatusSuccess && loan.loanStatus == 1) {
+        // Optionally, you can show text if the status is already updated.
+        if (statusState is LoanStatusSuccess && loan.loanStatus == "Approved") {
           return const Text(
             'تم قبول القرض بنجاح!',
             style: TextStyle(
@@ -101,7 +114,7 @@ class UpdateLoanStatusWidget extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           );
-        } else if (statusState is LoanStatusSuccess && loan.loanStatus == 2) {
+        } else if (statusState is LoanStatusSuccess && loan.loanStatus == "Rejected") {
           return const Text(
             'تم رفض القرض بنجاح!',
             style: TextStyle(

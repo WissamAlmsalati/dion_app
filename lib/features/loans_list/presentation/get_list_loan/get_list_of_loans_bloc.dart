@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-
-import '../../../authintication_feature/services/auth_service.dart';
-import '../../models/loan.dart';
+import '../../data/models/loan.dart';
 import '../../domain/repostry/loans_repostry.dart';
 
 part 'get_list_of_loans_event.dart';
@@ -14,7 +12,7 @@ class LoanBloc extends Bloc<LoanEvent, LoanState> {
 
   LoanBloc({required this.loanRepository}) : super(LoanInitial()) {
     on<LoadLoans>(_onLoadLoans);
-    on<LoadLoanDetails>(_onLoadLoanDetails); // Added for loading loan details.
+    on<LoadLoanDetails>(_onLoadLoanDetails); 
   }
 
 Future<void> _onLoadLoans(

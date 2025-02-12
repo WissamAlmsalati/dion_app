@@ -1,5 +1,5 @@
-import 'package:dion_app/core/network/api_constants.dart';
-import 'package:dion_app/core/network/services.dart';
+import 'package:dion_app/core/services/api_constants.dart';
+import 'package:dion_app/core/services/services.dart';
 import 'package:dion_app/features/authintication_feature/repository/auth_repository.dart';
 import 'package:dio/dio.dart';
 
@@ -18,6 +18,7 @@ class ResetPasswordImpl extends ResetPasswordRepository {
         headers: {'Content-Type': 'application/json'},
       ),
     );
+    
 
     if (response.statusCode == 200) {
       return response.data;
@@ -45,13 +46,11 @@ class ResetPasswordImpl extends ResetPasswordRepository {
       },
     );
 
-    print(otpId  + otp  ) ;
-
+    print(otpId);
+    print(otp);
     print(newPassword);
 
-    print(response.statusCode);
-    print(response.data); //
-
+     
     if (response.statusCode == 200) {
       return response.data['message'];
     } else {

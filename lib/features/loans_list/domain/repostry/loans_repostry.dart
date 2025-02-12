@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../authintication_feature/services/auth_service.dart';
-import '../../models/loan.dart';
+import '../../data/models/loan.dart';
 
 class LoanRepository {
   final String apiUrl =

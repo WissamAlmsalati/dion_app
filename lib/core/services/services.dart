@@ -13,8 +13,8 @@ class DioService {
       BaseOptions(
         baseUrl:
             'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/', 
-        connectTimeout: const Duration(seconds: 2000), // Connection timeout
-        receiveTimeout: const Duration(seconds: 2000), // Response timeout
+        connectTimeout: const Duration(seconds: 2000), 
+        receiveTimeout: const Duration(seconds: 2000), 
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -40,8 +40,7 @@ class DioService {
     );
   }
 
-  Future<Response> get(String endpoint,
-      {Map<String, dynamic>? queryParams, required Map<String, String> queryParameters}) async {
+  Future<Response> get(String endpoint,{Map<String, dynamic>? queryParams, required Map<String, String> queryParameters}) async {
     return await dio.get(endpoint, queryParameters: queryParams);
   }
 

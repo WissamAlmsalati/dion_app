@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../../core/network/api_constants.dart';
+import '../../../core/services/api_constants.dart';
 
 class AuthRepository {
   Future<Map<String, dynamic>> sendOtp(String phoneNumber) async {

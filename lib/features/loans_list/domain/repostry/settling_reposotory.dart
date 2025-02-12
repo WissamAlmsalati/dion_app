@@ -1,6 +1,6 @@
+import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../authintication_feature/services/auth_service.dart';
 
 class SettlingRepository {
   final String apiUrl = 'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/Loaning/SettlingLoan';
@@ -9,7 +9,7 @@ class SettlingRepository {
 
   SettlingRepository({required this.authService});
 
-  Future<void> settleLoan(int loanId, double amount) async {
+  Future<String> settleLoan(int loanId, double amount) async {
     final token = await authService.getToken();
 
     final response = await http.post(
@@ -30,6 +30,12 @@ class SettlingRepository {
     if (response.statusCode != 200) {
       throw Exception('Failed to settle loan: ${response.reasonPhrase}');
     }
+
+    // Parse the server response to extract a message.
+    final decoded = jsonDecode(response.body);
+    // Assume the server returns a JSON object with a 'message' key.
+    final message = decoded['message'] as String?;
+    return message ?? 'تمت تسوية القرض بنجاح!';
   }
 
   Future<void> updateLoanStatus(int loanId, int status) async {

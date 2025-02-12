@@ -1,10 +1,10 @@
 import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
 import 'package:dion_app/features/authintication_feature/viewmodel/auth_bloc.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';
+import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';
 import 'package:dion_app/features/loans_list/presentation/get_list_loan/get_list_of_loans_bloc.dart';
 import 'package:dion_app/features/loans_list/presentation/widgets/loans_list.dart';
-import 'package:dion_app/features/settling_feature/reposittory/settling_reposotory.dart';
-import 'package:dion_app/features/settling_feature/viewmodel/settle_loan_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/blocs/debt_repayment/settle_loan_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../home_screen/view/home_screen.dart';
-import '../../../loaning_feature/views/loaning_screen.dart';
+import '../../../create_loan_feature/views/loaning_screen.dart';
 import '../../../loans_list/presentation/views/loans_screen.dart';
 import '../../viewmodel/screen_bloc.dart';
 
@@ -55,8 +55,6 @@ class MainScreen extends StatelessWidget {
                 ],
               ),
               child: BottomNavigationBar(
-                showSelectedLabels: false,
-                showUnselectedLabels: false,
                 currentIndex: currentIndex,
                 onTap: (index) {
                   try {

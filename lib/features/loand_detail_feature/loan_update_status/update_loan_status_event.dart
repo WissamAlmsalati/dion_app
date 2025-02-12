@@ -12,7 +12,7 @@ abstract class UpdateLoanStatusEvent extends Equatable {
 
 class UpdateLoanStatus extends UpdateLoanStatusEvent {
   final int loanId;
-  final int loanStatus;
+  final String loanStatus;
 
   const UpdateLoanStatus({required this.loanId, required this.loanStatus});
 

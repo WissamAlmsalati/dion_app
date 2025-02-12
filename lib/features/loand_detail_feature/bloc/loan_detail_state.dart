@@ -1,4 +1,4 @@
-import '../../models/loan.dart';
+import '../../loans_list/data/models/loan.dart';
 
 abstract class LoanDetailState {}
 

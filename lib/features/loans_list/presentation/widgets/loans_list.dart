@@ -1,3 +1,4 @@
+import 'package:dion_app/features/loand_detail_feature/loan_update_status/update_loan_status_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,18 +9,17 @@ import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart
 
 // Import your Bloc, events, and states.
 import 'package:dion_app/features/loans_list/presentation/get_list_loan/get_list_of_loans_bloc.dart';
-import 'package:dion_app/features/loans_list/models/loan.dart';
+import 'package:dion_app/features/loans_list/data/models/loan.dart';
 
 // Import your LoanListItem widget.
 import 'package:dion_app/features/loans_list/presentation/widgets/loan_item.dart';
 
-/// This screen shows two tabs, one for "Borrowing" and one for "Lending" loans.
 class LoanTabsScreen extends StatelessWidget {
   const LoanTabsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Instantiate the AuthService once and pass it to the repository.
+    // Create the AuthService instance.
     final authService = AuthService();
 
     return DefaultTabController(
@@ -57,36 +57,62 @@ class LoanTabsScreen extends StatelessWidget {
   }
 }
 
-/// A widget that builds the loan list based on the Bloc state.
-/// It receives the `loanType` parameter and passes it along to [LoanList].
 class LoanListView extends StatelessWidget {
   final String loanType;
   const LoanListView({Key? key, required this.loanType}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoanBloc, LoanState>(
-      builder: (context, state) {
-        if (state is LoanLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is LoanLoaded) {
-          return LoanList(loans: state.loans, loanType: loanType);
-        } else if (state is LoanError) {
-          return Center(
-            child: Text(
-              state.message,
-              style: GoogleFonts.roboto(fontSize: 16),
-            ),
-          );
+    return BlocConsumer<LoanStatusBloc, LoanStatusState>(
+      listener: (context, statusState) {
+        if (statusState is LoanStatusSuccess) {
+          // When the loan status is updated successfully, refresh the loan list.
+          print("LoanStatusSuccess: ${statusState.message}");
+          context.read<LoanBloc>().add(LoadLoans(page: 1, loanType: loanType));
+        } else if (statusState is LoanStatusFailure) {
+          print("LoanStatusFailure: ${statusState.error}");
         }
-        return Container();
+      },
+      // The builder for LoanStatusBloc isn’t used to build UI directly;
+      // instead, we delegate the UI to the LoanBloc consumer.
+      builder: (context, statusState) {
+        return BlocConsumer<LoanBloc, LoanState>(
+          // Optionally, add a listener here if you need to handle side-effects from LoanBloc.
+          listener: (context, loanState) {
+            // For example, you could show a SnackBar if needed.
+          },
+          builder: (context, state) {
+            if (state is LoanLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is LoanLoaded) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  // Reload loans on pull-to-refresh.
+                  context
+                      .read<LoanBloc>()
+                      .add(LoadLoans(page: 1, loanType: loanType));
+                  // Optionally, wait for a moment to show the refresh indicator.
+                  await Future.delayed(const Duration(seconds: 1));
+                },
+                child: LoanList(loans: state.loans, loanType: loanType),
+              );
+            } else if (state is LoanError) {
+              return Center(
+                child: Text(
+                  state.message,
+                  style: GoogleFonts.roboto(fontSize: 16),
+                ),
+              );
+            }
+            return Container();
+          },
+        );
       },
     );
   }
 }
 
-/// A widget that builds a [ListView] of loans.
-/// It passes the [loanType] down to each [LoanListItem].
+
 class LoanList extends StatelessWidget {
   final List<Loan> loans;
   final String loanType;
@@ -108,6 +134,7 @@ class LoanList extends StatelessWidget {
     }
 
     return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: loans.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),

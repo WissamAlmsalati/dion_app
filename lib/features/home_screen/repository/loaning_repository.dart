@@ -1,32 +1,42 @@
-import 'dart:convert';
-import '../../../core/network/http_Interceptor.dart';
-import '../models/loaning_data.dart';
+import 'package:dio/dio.dart';
+import 'package:dion_app/core/services/services.dart';
+import '../data/models/loaning_data.dart';
 import '../../authintication_feature/services/auth_service.dart';
 
-import 'package:http/http.dart' as http;
-
 class LoaningRepository {
+  final AuthService authService;
+  final DioService dioService;
 
-  final AuthService authService = AuthService();
-
-  LoaningRepository();
+  LoaningRepository({
+    required this.authService,
+    required this.dioService,
+  });
 
   Future<LoaningData> fetchLoaningData() async {
-    final response = await http.get(
-      Uri.parse(
-          'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/Loaning/main'
-      ),
-      headers: {
-        'Authorization': 'Bearer ${await authService.getToken()}',
-      },
-    );
+    final token = await authService.getToken();
 
-    print(response.body);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      return LoaningData.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('');
+    try {
+      final response = await dioService.dio.get(
+        'Loaning/main',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      print('Response Data: ${response.data}');
+      print('Response Status Code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        return LoaningData.fromJson(response.data);
+      } else {
+        throw Exception(
+            'Failed to fetch loaning data, status code: ${response.statusCode}');
+      }
+    } on DioError catch (e) {
+      print('Dio error: ${e.message}');
+      throw Exception('Failed to fetch loaning data due to Dio error: ${e.message}');
     }
   }
 }

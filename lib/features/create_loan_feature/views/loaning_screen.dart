@@ -1,8 +1,10 @@
+import 'package:dion_app/core/services/services.dart';
 import 'package:dion_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/widgets/custom_text_field.dart';
-import '../repository/loaning_repository.dart';
+import '../repository/create_loan_repository.dart';
 import '../../authintication_feature/services/auth_service.dart';
 import '../models/loaning_model.dart';
 import '../viewmodel/loaning_bloc.dart';
@@ -26,12 +28,13 @@ class _LoaningScreenState extends State<LoaningScreen> {
   @override
   Widget build(BuildContext context) {
     final authService = AuthService();
-    final loaningRepository = LoaningRepository(authService: authService);
+    final createLoanRepository = CreateLoanRepository(authService: authService, dioService: DioService());
 
     return BlocProvider(
-      create: (context) => CreateLoanBloc(loaningRepository: loaningRepository),
+      create: (context) => CreateLoanBloc(createLoanRepository: createLoanRepository),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text('انشاء دين'),
           centerTitle: true,
         ),
@@ -131,18 +134,22 @@ class _LoaningScreenState extends State<LoaningScreen> {
                       amount: double.parse(_amountController.text),
                       dueDate: DateTime.now().toString(),
                       notes: _notesController.text,
-                      loanType: 0,
+                      loanType: 1,
                     );
                     context.read<CreateLoanBloc>().add(
                           CreateLoan(loaningModel: loaningModel),
                         );
                   }
                 },
-                child: const Text(
+                child:  Text(
                   'انشاء دين',
-                  style: TextStyle(fontSize: 14),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: GoogleFonts.tajawal().fontFamily,
                 ),
               ),
+            ),
             )
           ],
         ),

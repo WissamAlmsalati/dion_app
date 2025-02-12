@@ -12,7 +12,14 @@ class SettleLoanInitial extends SettleLoanState {}
 
 class SettleLoanLoading extends SettleLoanState {}
 
-class SettleLoanSuccess extends SettleLoanState {}
+class SettleLoanSuccess extends SettleLoanState {
+  final String message;
+
+  const SettleLoanSuccess({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
 
 class SettleLoanFailure extends SettleLoanState {
   final String error;

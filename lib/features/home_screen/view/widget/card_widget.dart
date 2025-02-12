@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../models/loaning_data.dart';
+import '../../data/models/loaning_data.dart';
 
 class CardWidget extends StatelessWidget {
   final LoaningData state;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 
 class CustomButton extends StatelessWidget {
@@ -43,11 +44,11 @@ class CustomButton extends StatelessWidget {
             : Center(
                 child: Text(
                   text,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppTheme.defaultFontColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: textColor ?? Colors.white,
+                        fontFamily: GoogleFonts.tajawal().fontFamily,
+                        fontWeight: FontWeight.bold,
+                      ),
                   textAlign: TextAlign.center,
                 ),
               ),

@@ -1,15 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import '../models/loaning_data.dart';
+import '../data/models/loaning_data.dart';
 import '../repository/loaning_repository.dart';
 
 part 'loaning_event.dart';
 part 'loaning_state.dart';
 
 class LoaningBloc extends Bloc<LoaningEvent, LoaningState> {
-  final LoaningRepository repository = LoaningRepository();
+  final LoaningRepository repository;
 
-  LoaningBloc() : super(LoaningInitial()) {
+  LoaningBloc({required this.repository}) : super(LoaningInitial()) {
     on<FetchLoaningData>(_onFetchLoaningData);
   }
 

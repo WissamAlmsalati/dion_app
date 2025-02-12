@@ -6,7 +6,7 @@ class AcceptLoanRepository {
   static const String apiUrl = 'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/Loaning/UpdateLoanStatus';
   final AuthService authService = AuthService();
 
-  Future<String> updateLoanStatus(int loanId, int loanStatus) async {
+  Future<String> updateLoanStatus(int loanId, String loanStatus) async {
     final token = await authService.getToken();
 
     final response = await http.post(
