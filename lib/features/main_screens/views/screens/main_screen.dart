@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../home_screen/view/home_screen.dart';
-import '../../../create_loan_feature/views/loaning_screen.dart';
+import '../../../home_screen/presentation/screens/home_screen.dart';
+import '../../../create_loan_feature/presentation/views/loaning_screen.dart';
 import '../../../loans_list/presentation/views/loans_screen.dart';
-import '../../viewmodel/screen_bloc.dart';
+import '../../toggle_screen_bloc/screen_bloc.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});

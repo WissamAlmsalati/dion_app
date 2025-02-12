@@ -1,7 +1,7 @@
 import 'package:dion_app/features/loans_list/data/models/loan.dart';
-import 'package:dion_app/features/loand_detail_feature/loan_update_status/update_loan_status_bloc.dart';
-import 'package:dion_app/features/loand_detail_feature/bloc/loan_detail_bloc.dart';
-import 'package:dion_app/features/loand_detail_feature/bloc/loan_detail_event.dart';
+import 'package:dion_app/features/loand_detail_feature/presentation/blocs/loan_update_status/update_loan_status_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/presentation/blocs/loan_detail_bloc/loan_detail_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/presentation/blocs/loan_detail_bloc/loan_detail_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

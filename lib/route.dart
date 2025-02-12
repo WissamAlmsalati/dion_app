@@ -1,13 +1,13 @@
-import 'package:dion_app/features/home_screen/view/home_screen.dart';
+import 'package:dion_app/features/home_screen/presentation/screens/home_screen.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/screens/profile_screen.dart';
 import 'package:dion_app/features/reset_password/presentation/screens/phone_number_screen.dart';
 import 'package:dion_app/features/reset_password/presentation/screens/reset_password_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'features/authintication_feature/views/screens/login_screen.dart';
-import 'features/authintication_feature/views/screens/phone_number_verify.dart';
-import 'features/authintication_feature/views/screens/sign_up_screen.dart';
-import 'features/authintication_feature/views/screens/verify_otp.dart';
+import 'features/authintication_feature/presentation/screens/login_screen.dart';
+import 'features/authintication_feature/presentation/screens/phone_number_verify.dart';
+import 'features/authintication_feature/presentation/screens/sign_up_screen.dart';
+import 'features/authintication_feature/presentation/screens/verify_otp.dart';
 import 'features/main_screens/views/screens/main_screen.dart';
 
 class AppRouter {

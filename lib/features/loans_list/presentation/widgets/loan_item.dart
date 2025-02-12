@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/models/loan.dart';
-import '../../../loand_detail_feature/view/loan_detail.dart';
+import '../../../loand_detail_feature/presentation/view/loan_detail.dart';
 
 class LoanListItem extends StatelessWidget {
   final String loadType;

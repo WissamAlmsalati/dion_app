@@ -1,13 +1,13 @@
 import 'package:dion_app/core/services/providers.dart';
 import 'package:dion_app/core/theme/app_theme.dart';
-import 'package:dion_app/features/authintication_feature/viewmodel/auth_bloc.dart';
+import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
 import 'package:dion_app/route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_service.dart';
 
 class MyApp extends StatelessWidget {
 

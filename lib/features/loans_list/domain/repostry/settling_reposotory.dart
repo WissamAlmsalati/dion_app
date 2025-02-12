@@ -1,4 +1,4 @@
-import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

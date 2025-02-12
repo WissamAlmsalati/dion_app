@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:dion_app/features/loand_detail_feature/repository/loan_detail_repository.dart';
+import 'package:dion_app/features/loand_detail_feature/domain/repository/loan_detail_repository.dart';
 import 'package:dion_app/features/loans_list/data/models/loan.dart';
-import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_service.dart';
 
 class LoanDetailRepositoryImpl implements LoanDetailRepository {
   final Dio dio;

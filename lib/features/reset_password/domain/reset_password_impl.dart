@@ -1,6 +1,6 @@
 import 'package:dion_app/core/services/api_constants.dart';
-import 'package:dion_app/core/services/services.dart';
-import 'package:dion_app/features/authintication_feature/repository/auth_repository.dart';
+import 'package:dion_app/core/services/dio_service.dart';
+import 'package:dion_app/features/authintication_feature/domain/repository/auth_repository.dart';
 import 'package:dio/dio.dart';
 
 import '../data/reset_password_repostry.dart';

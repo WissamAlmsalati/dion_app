@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dion_app/features/authintication_feature/viewmodel/auth_bloc.dart';
-import 'package:dion_app/features/home_screen/viewmodel/loaning_bloc.dart';
-import 'package:dion_app/features/loand_detail_feature/blocs/debt_repayment/settle_loan_bloc.dart';
+import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
+import 'package:dion_app/features/home_screen/presentation/home_screen_loans_Bloc/loaning_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/presentation/blocs/debt_repayment/settle_loan_bloc.dart';
 import 'package:dion_app/features/loans_list/presentation/get_list_loan/get_list_of_loans_bloc.dart';
 import 'package:dion_app/features/reset_password/presentation/cubit/reset_password_bloc.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cubit.dart';
-import 'package:dion_app/features/authintication_feature/repository/auth_repository.dart';
+import 'package:dion_app/features/authintication_feature/domain/repository/auth_repository.dart';
 import 'package:dion_app/features/home_screen/repository/loaning_repository.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';

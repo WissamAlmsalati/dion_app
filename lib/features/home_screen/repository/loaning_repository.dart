@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:dion_app/core/services/services.dart';
+import 'package:dion_app/core/services/dio_service.dart';
 import '../data/models/loaning_data.dart';
-import '../../authintication_feature/services/auth_service.dart';
+import '../../../core/services/auth_service.dart';
 
 class LoaningRepository {
   final AuthService authService;

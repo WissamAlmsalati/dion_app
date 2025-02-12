@@ -1,10 +1,10 @@
-import 'package:dion_app/features/loand_detail_feature/loan_update_status/update_loan_status_bloc.dart';
+import 'package:dion_app/features/loand_detail_feature/presentation/blocs/loan_update_status/update_loan_status_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Import your authentication and repository classes.
-import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_service.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';
 
 // Import your Bloc, events, and states.

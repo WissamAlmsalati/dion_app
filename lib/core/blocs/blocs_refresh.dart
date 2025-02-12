@@ -1,10 +1,10 @@
-import 'package:dion_app/features/home_screen/viewmodel/loaning_bloc.dart';
+import 'package:dion_app/features/home_screen/presentation/home_screen_loans_Bloc/loaning_bloc.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Adjust these import paths to match your project structure.
-import 'package:dion_app/features/authintication_feature/viewmodel/auth_bloc.dart';
+import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
 import 'package:dion_app/features/loans_list/presentation/get_list_loan/get_list_of_loans_bloc.dart';
 
 class BlocsRefresher extends StatelessWidget {

@@ -1,8 +1,8 @@
-import 'package:dion_app/core/services/services.dart';
+import 'package:dion_app/core/services/dio_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:dion_app/features/authintication_feature/services/auth_service.dart';
-import 'package:dion_app/features/authintication_feature/repository/auth_repository.dart';
+import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/features/authintication_feature/domain/repository/auth_repository.dart';
 import 'package:dion_app/features/home_screen/repository/loaning_repository.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';

@@ -6,9 +6,9 @@ import 'package:dion_app/features/loans_list/presentation/widgets/loan_item.dart
 import 'package:dion_app/features/loans_list/presentation/widgets/loans_list.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../authintication_feature/services/auth_service.dart';
-import '../../../authintication_feature/viewmodel/auth_bloc.dart';
-import '../../../loand_detail_feature/blocs/debt_repayment/settle_loan_bloc.dart';
+import '../../../../core/services/auth_service.dart';
+import '../../../authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
+import '../../../loand_detail_feature/presentation/blocs/debt_repayment/settle_loan_bloc.dart';
 import '../../domain/repostry/loans_repostry.dart';
 import '../get_list_loan/get_list_of_loans_bloc.dart';
 
