@@ -1,6 +1,7 @@
-import 'package:dion_app/core/services/dio_service.dart';
+import 'package:dion_app/features/main_screens/toggle_screen_bloc/screen_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dion_app/core/services/dio_service.dart';
 import 'package:dion_app/core/services/auth_service.dart';
 import 'package:dion_app/features/authintication_feature/domain/repository/auth_repository.dart';
 import 'package:dion_app/features/home_screen/repository/loaning_repository.dart';
@@ -12,12 +13,13 @@ import 'package:dion_app/features/profile_feature/data/repostry/profile_data_rep
 final GetIt getIt = GetIt.instance;
 
 void setupLocator() {
-  // تسجيل التبعيات كـ Lazy Singletons (يتم إنشاؤها عند الطلب)
-  getIt.registerLazySingleton<FlutterSecureStorage>(() => const FlutterSecureStorage());
+  // Register core services
+  getIt.registerLazySingleton<FlutterSecureStorage>(
+      () => const FlutterSecureStorage());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<DioService>(() => DioService());
 
-  // تسجيل الـ repositories والخدمات الأخرى التي تعتمد على التبعيات السابقة
+  // Register repositories and other services
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepository());
   getIt.registerLazySingleton<LoanRepository>(
     () => LoanRepository(authService: getIt<AuthService>()),
@@ -35,4 +37,7 @@ void setupLocator() {
   getIt.registerLazySingleton<ProfileDataRepostryImpl>(
     () => ProfileDataRepostryImpl(authService: getIt<AuthService>()),
   );
+
+  // Register NavigationBloc as a factory so that a new instance is provided each time.
+  getIt.registerFactory<NavigationBloc>(() => NavigationBloc());
 }
