@@ -2,7 +2,7 @@ import 'package:dion_app/features/main_screens/toggle_screen_bloc/screen_bloc.da
 import 'package:get_it/get_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dion_app/core/services/dio_service.dart';
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/authintication_feature/domain/repository/auth_repository.dart';
 import 'package:dion_app/features/home_screen/repository/loaning_repository.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';
@@ -13,31 +13,25 @@ import 'package:dion_app/features/profile_feature/data/repostry/profile_data_rep
 final GetIt getIt = GetIt.instance;
 
 void setupLocator() {
-  // Register core services
-  getIt.registerLazySingleton<FlutterSecureStorage>(
-      () => const FlutterSecureStorage());
+
+  getIt.registerLazySingleton<FlutterSecureStorage>(() => const FlutterSecureStorage());
+
   getIt.registerLazySingleton<AuthService>(() => AuthService());
+
   getIt.registerLazySingleton<DioService>(() => DioService());
 
-  // Register repositories and other services
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepository());
-  getIt.registerLazySingleton<LoanRepository>(
-    () => LoanRepository(authService: getIt<AuthService>()),
-  );
-  getIt.registerLazySingleton<LoaningRepository>(
-    () => LoaningRepository(
-      authService: getIt<AuthService>(),
-      dioService: getIt<DioService>(),
-    ),
-  );
-  getIt.registerLazySingleton<SettlingRepository>(
-    () => SettlingRepository(authService: getIt<AuthService>()),
-  );
-  getIt.registerLazySingleton<ResetPasswordImpl>(() => ResetPasswordImpl());
-  getIt.registerLazySingleton<ProfileDataRepostryImpl>(
-    () => ProfileDataRepostryImpl(authService: getIt<AuthService>()),
-  );
 
-  // Register NavigationBloc as a factory so that a new instance is provided each time.
+  getIt.registerLazySingleton<LoanRepository>(() => LoanRepository(authService: getIt<AuthService>()),);
+
+  getIt.registerLazySingleton<LoaningRepository>(() => LoaningRepository(authService: getIt<AuthService>(),dioService: getIt<DioService>(),),);
+
+  getIt.registerLazySingleton<SettlingRepository>(() => SettlingRepository(authService: getIt<AuthService>()),);
+
+  getIt.registerLazySingleton<ResetPasswordImpl>(() => ResetPasswordImpl());
+
+  getIt.registerLazySingleton<ProfileDataRepostryImpl>(() => ProfileDataRepostryImpl(authService: getIt<AuthService>()),);
+
   getIt.registerFactory<NavigationBloc>(() => NavigationBloc());
+
 }

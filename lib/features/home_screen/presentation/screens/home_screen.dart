@@ -1,4 +1,4 @@
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/home_screen/presentation/widget/card_widget.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cubit.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_state.dart';

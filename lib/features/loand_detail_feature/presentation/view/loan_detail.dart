@@ -1,5 +1,5 @@
 import 'package:dion_app/core/widgets/build_row_contect.dart';
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/accept_loan_repository.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';
 import 'package:dion_app/features/loand_detail_feature/presentation/blocs/debt_repayment/settle_loan_bloc.dart';

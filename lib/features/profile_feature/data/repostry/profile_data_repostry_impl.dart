@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dion_app/features/profile_feature/data/models/profile_data.dart';
 import 'package:dion_app/features/profile_feature/domain/profile_data_repostry.dart';

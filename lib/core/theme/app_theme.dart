@@ -24,7 +24,7 @@ class AppTheme {
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: textColor), // Set leading icon color
+        iconTheme: const IconThemeData(color: textColor), 
       ),
       textTheme: TextTheme(
         titleLarge: GoogleFonts.tajawal(
@@ -69,7 +69,7 @@ class AppTheme {
         fillColor: defaultFontColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(1),
-          borderSide: BorderSide(color: textColor),
+          borderSide: const BorderSide(color: textColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(1),
@@ -77,7 +77,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(1),
-          borderSide: BorderSide(color: mainColor, width: 2),
+          borderSide: const BorderSide(color: mainColor, width: 2),
         ),
         labelStyle: GoogleFonts.tajawal(
           color: textColor,
@@ -86,7 +86,7 @@ class AppTheme {
         hintStyle: GoogleFonts.tajawal(
           color: textColor,
           fontSize: 14,
-        ),
+      ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Colors.white,

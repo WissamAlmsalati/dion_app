@@ -14,8 +14,7 @@ class DioService {
       BaseOptions(
         baseUrl:
             'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/',
-        connectTimeout: const Duration(seconds: 2000),
-        receiveTimeout: const Duration(seconds: 2000),
+
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -36,11 +35,9 @@ class DioService {
         onError: (DioError error, ErrorInterceptorHandler handler) async {
           print('Error: ${error.message}');
 
-          // Check if the error status code is 401 (Unauthorized)
           if (error.response?.statusCode == 401) {
             await _handleUnauthorized();
           }
-          // Pass the error along
           return handler.next(error);
         },
       ),

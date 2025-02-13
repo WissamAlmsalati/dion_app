@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../domain/repository/create_loan_repository.dart';
-import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/auth_token_service.dart';
 import '../../data/models/loaning_model.dart';
 import '../create_loan_bloc/loaning_bloc.dart';
 import '../create_loan_bloc/loaning_event.dart';

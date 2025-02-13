@@ -21,7 +21,6 @@ class AppProviders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // استرجاع الـ GetIt instance مباشرةً عبر GetIt.instance أو getIt
     final getIt = GetIt.instance;
     
     return MultiBlocProvider(

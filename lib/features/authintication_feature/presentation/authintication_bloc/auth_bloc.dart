@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../domain/repository/auth_repository.dart';
-import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/auth_token_service.dart';
 
 part 'auth_event.dart';
 

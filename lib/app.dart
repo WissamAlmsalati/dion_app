@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 
 class MyApp extends StatelessWidget {
 

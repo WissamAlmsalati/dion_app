@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Import your authentication and repository classes.
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';
 
 // Import your Bloc, events, and states.

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dion_app/core/services/dio_service.dart'; // Adjust the path if needed
 import '../../data/models/loaning_model.dart';
-import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/auth_token_service.dart';
 
 class CreateLoanRepository {
   final AuthService authService;

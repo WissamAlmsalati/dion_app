@@ -1,0 +1,7 @@
+{
+    "editor.inlayHints.fontFamily": "DejaVu Sans Mono, Consolas, 'Courier New', monospace",
+    "scm.inputFontFamily": "DejaVu Sans Mono, Consolas, 'Courier New', monospace",
+    "terminal.integrated.fontFamily": "DejaVu Sans Mono, Consolas, 'Courier New', monospace",
+    "notebook.output.fontFamily": "DejaVu Sans Mono, Consolas, 'Courier New', monospace",
+    "editor.codeLensFontFamily": "DejaVu Sans Mono, Consolas, 'Courier New', monospace"
+}

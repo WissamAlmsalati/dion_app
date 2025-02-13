@@ -1,4 +1,4 @@
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/loans_repostry.dart';
 import 'package:dion_app/features/loans_list/domain/repostry/settling_reposotory.dart';

@@ -1,6 +1,6 @@
 import 'package:dion_app/core/theme/app_theme.dart';
 import 'package:dion_app/core/widgets/custom_dialog.dart';
-import 'package:dion_app/core/services/auth_service.dart';
+import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
 import 'package:dion_app/features/profile_feature/data/models/profile_data.dart';
 import 'package:dion_app/features/profile_feature/data/repostry/profile_data_repostry_impl.dart';
