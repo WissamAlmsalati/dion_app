@@ -1,20 +1,14 @@
+import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:dion_app/core/services/providers.dart';
 import 'package:dion_app/core/theme/app_theme.dart';
-import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
-import 'package:dion_app/route.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get_it/get_it.dart';
-import 'package:dion_app/core/services/auth_token_service.dart';
+// Alias the custom router import:
+import 'package:dion_app/route.dart' as appRouter;
 
 class MyApp extends StatelessWidget {
-
-  final AuthService authService = GetIt.instance<AuthService>();
-  final FlutterSecureStorage storage = GetIt.instance<FlutterSecureStorage>();
-
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +17,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Dion App',
         theme: AppTheme.purpleTheme,
-        routerConfig: AppRouter.router,
+        // Use the alias to reference your RouterConfig:
+        routerConfig: appRouter.RouterConfig.router,
         locale: const Locale('ar', 'AE'),
         supportedLocales: const [Locale('ar', 'AE')],
         localizationsDelegates: const [
@@ -34,24 +29,40 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return Directionality(
             textDirection: TextDirection.rtl,
-            child: BlocBuilder<AuthenticationBloc, AuthState>(
-              builder: (context, state) {
-                if (state is AuthChecking) {
-                  return const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                } else if (state is Authenticated) {
-                  AppRouter.router.go('/main_screen');
-                } else if (state is Unauthenticated) {
-                  AppRouter.router.go('/');
-                }
-                return child!;
-              },
-            ),
+            child: AuthStateHandler(child: child),
           );
         },
+      ),
+    );
+  }
+}
+
+class AuthStateHandler extends StatelessWidget {
+  final Widget? child;
+
+  const AuthStateHandler({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthenticationBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthChecking) {
+          return const LoadingScreen();
+        }
+        return child!;
+      },
+    );
+  }
+}
+
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

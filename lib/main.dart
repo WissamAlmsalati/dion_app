@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 
 
 Future<void> main() async{
-
   setupLocator();
-
-  runApp(
-    MyApp()
-  );
+  runApp( const MyApp());
 }

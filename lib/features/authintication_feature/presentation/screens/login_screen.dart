@@ -6,10 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../authintication_bloc/auth_bloc.dart';
-import '../../domain/repository/auth_repository.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+  final String? redirect;
+
+  LoginScreen({Key? key, this.redirect}) : super(key: key);
 
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -21,19 +22,27 @@ class LoginScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'تسجيل الدخول',
-          style: TextStyle(
-            fontSize: 24,
-          ),
+          style: TextStyle(fontSize: 24),
         ),
       ),
       body: BlocListener<AuthenticationBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthError || state is ConnectionError) {
-            final message = state is AuthError ? state.message : (state as ConnectionError).message;
+          // When authentication succeeds, navigate to the intended route.
+          if (state is Authenticated) {
+            if (redirect != null && redirect!.isNotEmpty) {
+              context.go(redirect!);
+            } else {
+              context.go('/main_screen');
+            }
+          }
+          // If there's an error, display a SnackBar.
+          else if (state is AuthError || state is ConnectionError) {
+            final message = state is AuthError
+                ? state.message
+                : (state as ConnectionError).message;
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
-              );
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(message)));
             });
           }
         },
@@ -124,9 +133,8 @@ class LoginScreen extends StatelessWidget {
   }
 
   String? _validatePhoneNumber(String? value) {
-    // Validate phone number starting with 91, 92, 93, or 94 followed by 7 digits
+    // Validate phone number starting with 91, 92, 93, or 94 followed by 7 digits.
     final regex = RegExp(r'^(91|92|93|94)\d{7}$');
-
     if (value == null || value.isEmpty) {
       return 'رقم الهاتف مطلوب';
     } else if (!regex.hasMatch(value)) {
@@ -136,9 +144,10 @@ class LoginScreen extends StatelessWidget {
   }
 
   void _onLoginPressed(
-      BuildContext context,
-      TextEditingController phoneController,
-      TextEditingController passwordController) {
+    BuildContext context,
+    TextEditingController phoneController,
+    TextEditingController passwordController,
+  ) {
     final phoneNumber = phoneController.text;
     final password = passwordController.text;
     context
