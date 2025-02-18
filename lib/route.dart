@@ -13,7 +13,6 @@ import 'package:dion_app/features/main_screens/views/screens/main_screen.dart';
 import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
 
 class RouterConfig {
-  // Route names as constants for better maintainability
   static const String home = '/';
   static const String signup = '/signup';
   static const String login = '/login';
@@ -24,7 +23,6 @@ class RouterConfig {
   static const String resetPassOtp = '/reset_pass_otp_screen';
   static const String profile = '/profile_screen';
 
-  // List of public routes that don't require authentication
   static const List<String> publicRoutes = [
     login,
     signup,
@@ -33,7 +31,6 @@ class RouterConfig {
     resetPassOtp,
   ];
 
-  // Router configuration
   static final router = GoRouter(
     initialLocation: home,
     debugLogDiagnostics: true,
@@ -42,7 +39,6 @@ class RouterConfig {
     redirect: _guardRoute,
   );
 
-  // Routes definition
   static final List<RouteBase> _routes = [
     GoRoute(
       path: home,
@@ -59,7 +55,6 @@ class RouterConfig {
         );
       },
     ),
-    // Updated Login route to extract and pass the 'redirect' query parameter:
     GoRoute(
       path: login,
       builder: (context, state) {
@@ -69,11 +64,11 @@ class RouterConfig {
     ),
     GoRoute(
       path: mainScreen,
-      builder: (context, state) => MainScreen(),
+      builder: (context, state) => const MainScreen(),
     ),
     GoRoute(
       path: homeScreen,
-      builder: (context, state) => HomeScreen(),
+      builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
       path: otp,
@@ -95,22 +90,19 @@ class RouterConfig {
       builder: (context, state) {
         final extra = state.extra;
         String phoneNumber = '';
-
         if (extra is Map<String, dynamic> && extra.containsKey('phoneNumber')) {
           phoneNumber = extra['phoneNumber'] as String? ?? '';
         }
-
         return ResetPasswordScreen(phoneNumber: phoneNumber);
       },
     ),
     GoRoute(
       name: 'profile',
       path: profile,
-      builder: (context, state) => ProfileScreen(),
+      builder: (context, state) => const ProfileScreen(),
     ),
   ];
 
-  // Error screen builder
   static Widget _errorBuilder(BuildContext context, GoRouterState state) {
     return Scaffold(
       appBar: AppBar(title: const Text('Error')),
@@ -118,34 +110,25 @@ class RouterConfig {
     );
   }
 
-  // Route guard
   static String? _guardRoute(BuildContext context, GoRouterState state) {
     final authState = context.read<AuthenticationBloc>().state;
-    final isProfileRoute = state.matchedLocation == profile;
 
-    // If the user is trying to access the profile route
-    if (isProfileRoute) {
-      if (authState is Authenticated) {
-        // Allow access if authenticated
-        return null;
-      } else if (authState is Unauthenticated) {
-        // Redirect to login with a "redirect" query parameter pointing to profile
-        return '$login?redirect=$profile';
-      }
+    // إذا لم يكن المستخدم مسجلاً الدخول وأراد فتح صفحة غير عامة،
+    // أعد توجيهه إلى صفحة تسجيل الدخول مع إعادة توجيه إلى الصفحة المطلوبة بعد تسجيل الدخول
+    final bool isPublicRoute = publicRoutes.contains(state.matchedLocation);
+    if (authState is Unauthenticated && !isPublicRoute) {
+      return '$login?redirect=${state.matchedLocation}';
     }
 
-    // Handle other routes: if authenticated and at home, go to mainScreen
+    // إذا كان المستخدم مسجلاً الدخول وهو في الصفحة الرئيسية، أعد توجيهه إلى الصفحة الرئيسية بعد تسجيل الدخول
     if (authState is Authenticated && state.matchedLocation == home) {
       return mainScreen;
-    } else if (authState is Unauthenticated &&
-        !publicRoutes.contains(state.matchedLocation)) {
-      return home;
     }
 
+    // السماح بالانتقال للصفحة المطلوبة إذا لم يكن هناك شرط لإعادة التوجيه
     return null;
   }
 
-  // Helper method to extract parameters from state (if needed)
   static Map<String, dynamic> _extractParams(GoRouterState state) {
     final extra = state.extra as Map<String, dynamic>?;
     return {

@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Dion App',
         theme: AppTheme.purpleTheme,
-        // Use the alias to reference your RouterConfig:
         routerConfig: appRouter.RouterConfig.router,
         locale: const Locale('ar', 'AE'),
         supportedLocales: const [Locale('ar', 'AE')],

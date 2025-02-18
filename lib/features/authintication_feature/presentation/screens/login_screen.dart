@@ -1,4 +1,6 @@
 import 'package:dion_app/core/theme/app_theme.dart';
+import 'package:dion_app/features/home_screen/presentation/home_screen_loans_Bloc/loaning_bloc.dart';
+import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,16 +29,16 @@ class LoginScreen extends StatelessWidget {
       ),
       body: BlocListener<AuthenticationBloc, AuthState>(
         listener: (context, state) {
-          // When authentication succeeds, navigate to the intended route.
           if (state is Authenticated) {
+            context.read<LoaningBloc>().add(FetchLoaningData());
+            context.read<ProfileCubit>().fetchProfileData();
+
             if (redirect != null && redirect!.isNotEmpty) {
               context.go(redirect!);
             } else {
               context.go('/main_screen');
             }
-          }
-          // If there's an error, display a SnackBar.
-          else if (state is AuthError || state is ConnectionError) {
+          } else if (state is AuthError || state is ConnectionError) {
             final message = state is AuthError
                 ? state.message
                 : (state as ConnectionError).message;
@@ -133,7 +135,6 @@ class LoginScreen extends StatelessWidget {
   }
 
   String? _validatePhoneNumber(String? value) {
-    // Validate phone number starting with 91, 92, 93, or 94 followed by 7 digits.
     final regex = RegExp(r'^(91|92|93|94)\d{7}$');
     if (value == null || value.isEmpty) {
       return 'رقم الهاتف مطلوب';
@@ -141,8 +142,7 @@ class LoginScreen extends StatelessWidget {
       return 'رقم الهاتف يجب أن يبدأ ب 91 أو 92 أو 93 أو 94 ويجب أن يتكون من 9 أرقام';
     }
     return null;
-  }
-
+  }   
   void _onLoginPressed(
     BuildContext context,
     TextEditingController phoneController,

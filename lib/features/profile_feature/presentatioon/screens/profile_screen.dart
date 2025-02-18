@@ -4,6 +4,7 @@ import 'package:dion_app/core/services/auth_token_service.dart';
 import 'package:dion_app/features/authintication_feature/presentation/authintication_bloc/auth_bloc.dart';
 import 'package:dion_app/features/profile_feature/data/models/profile_data.dart';
 import 'package:dion_app/features/profile_feature/data/repostry/profile_data_repostry_impl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -134,10 +135,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       confirmText: "نعم",
                       cancelText: "إلغاء",
                       onConfirm: () {
-                        // Dispatch logout event.
+                        try{
                         context.read<AuthenticationBloc>().add(LogoutEvent());
-                        // Reset the profile state.
                         context.read<ProfileCubit>().resetProfile();
+                        context.go("/login");
+
+                        }catch (e){
+                          if (kDebugMode) {
+                            print(e);
+                          }
+                        }
                       },
                     ),
                   );
@@ -148,7 +155,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
         leading: IconButton(
-          onPressed: () {
+          onPressed: () {                        // Dispatch logout event.
+
             context.push("/main_screen");
           },
           icon: Icon(Icons.arrow_back, color: AppTheme.textColor),
