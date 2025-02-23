@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color mainColor = Color(0xFFFB847C);
+  static const Color mainColor = Color(0xFF42FFF9);
   static const Color defaultFontColor = Color(0xFFEFF5FE); // Default font color
   static const Color textColor = Color(0xFF011A51);
 

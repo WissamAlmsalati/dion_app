@@ -36,19 +36,22 @@ class SignUpScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(
                 top: MediaQuery.sizeOf(context).width * 0.1,
-
-
-              left: MediaQuery.sizeOf(context).width * 0.1,
+                left: MediaQuery.sizeOf(context).width * 0.1,
                 right: MediaQuery.sizeOf(context).width * 0.1,
               ),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    Text("مرحبا",style: Theme.of(context).textTheme.displayMedium,),
+                    Text(
+                      "مرحبا", style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 30.0,
+                        color: AppTheme.mainColor,
+                      ),
+                    ),
                     Text(
                       "يرجي انشاء حساب لاستخدام التطبيق",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontSize: 18.0,
                             color: AppTheme.textColor.withOpacity(0.5),
                           ),
@@ -58,6 +61,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     SvgPicture.asset("assets/images/registerImage.svg"),
                     CustomTextField(
+                      width: MediaQuery.sizeOf(context).height * 0.01,
                       controller: _nameController,
                       labelText: 'الاسم',
                       validator: (value) {
@@ -65,9 +69,12 @@ class SignUpScreen extends StatelessWidget {
                           return 'يرجى إدخال الاسم';
                         }
                         return null;
-                      }, maxLength: 20,
+                      },
+                      maxLength: 20,
                     ),
                     CustomTextField(
+                      width: MediaQuery.sizeOf(context).height * 0.01,
+
                       controller: _emailController,
                       labelText: 'البريد الإلكتروني',
                       keyboardType: TextInputType.emailAddress,
@@ -76,9 +83,12 @@ class SignUpScreen extends StatelessWidget {
                           return 'يرجى إدخال البريد الإلكتروني';
                         }
                         return null;
-                      }, maxLength: 20,
+                      },
+                      maxLength: 20,
                     ),
                     CustomTextField(
+                      width: MediaQuery.sizeOf(context).height * 0.01,
+
                       controller: _passwordController,
                       labelText: 'كلمة المرور',
                       obscureText: true,
@@ -87,9 +97,11 @@ class SignUpScreen extends StatelessWidget {
                           return 'يرجى إدخال كلمة المرور';
                         }
                         return null;
-                      }, maxLength: 8,
+                      },
+                      maxLength: 8,
                     ),
                     CustomTextField(
+                      width: MediaQuery.sizeOf(context).height * 0.01,
 
                       controller: _otpController,
                       labelText: 'رمز التحقق',
@@ -101,10 +113,10 @@ class SignUpScreen extends StatelessWidget {
                           return 'يرجى إدخال رمز التحقق';
                         }
                         return null;
-                      }, maxLength: 6,
+                      },
+                      maxLength: 6,
                     ),
                     const SizedBox(height: 20),
-                    // Text('رقم الهاتف هو: $phoneNumber'),
                     const SizedBox(height: 20),
                     BlocConsumer<AuthenticationBloc, AuthState>(
                       listener: (context, state) {
@@ -113,7 +125,15 @@ class SignUpScreen extends StatelessWidget {
                             SnackBar(content: Text(state.message)),
                           );
                           context.go('/login');
-                        }  else if (state is ConnectionError) {
+                        } else if (state is AuthError) {
+                          // معالجة خطأ التسجيل وعرض رسالة الخطأ من الخادم
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (state is ConnectionError) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(state.message),
@@ -124,6 +144,7 @@ class SignUpScreen extends StatelessWidget {
                       },
                       builder: (context, state) {
                         return CustomButton(
+                          height: MediaQuery.sizeOf(context).height * 0.07,
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               final user = User(
@@ -140,8 +161,7 @@ class SignUpScreen extends StatelessWidget {
                                   .add(SignUpEvent(user: user));
                             }
                           },
-                          text:
-                              state is AuthLoading ? "جاري التسجيل..." : "تسجيل",
+                          text: state is AuthLoading ? "جاري التسجيل..." : "تسجيل",
                           isLoading: state is AuthLoading,
                         );
                       },

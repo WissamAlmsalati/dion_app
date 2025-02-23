@@ -5,20 +5,17 @@ class DioService {
   static final DioService _instance = DioService._internal();
   late final Dio dio;
 
-  factory DioService() {
-    return _instance;
-  }
+  factory DioService() => _instance;
 
   DioService._internal() {
     dio = Dio(
       BaseOptions(
         baseUrl:
             'https://dionv2-csbtgbecbxcybxfg.italynorth-01.azurewebsites.net/api/',
-
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-        },
+          },
       ),
     );
 
@@ -32,8 +29,10 @@ class DioService {
           print('Response: ${response.statusCode}');
           return handler.next(response);
         },
-        onError: (DioError error, ErrorInterceptorHandler handler) async {
-          print('Error: ${error.message}');
+        onError: (DioException error, ErrorInterceptorHandler handler) async {
+          final errorMessage =
+              error.response?.data?['message'] ?? error.message;
+          print('Error: $errorMessage');
 
           if (error.response?.statusCode == 401) {
             await _handleUnauthorized();
@@ -44,12 +43,10 @@ class DioService {
     );
   }
 
-
-  Future<void> _handleUnauthorized() async {
+  static Future<void> _handleUnauthorized() async {
     const storage = FlutterSecureStorage();
     await storage.deleteAll();
     print('User logged out due to 401 Unauthorized error.');
-    
   }
 
   Future<Response> get(String endpoint,

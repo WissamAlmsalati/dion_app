@@ -1,4 +1,5 @@
 import 'package:dion_app/core/theme/app_theme.dart';
+import 'package:dion_app/features/authintication_feature/presentation/widgets/login_button.dart';
 import 'package:dion_app/features/home_screen/presentation/home_screen_loans_Bloc/loaning_bloc.dart';
 import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class LoginScreen extends StatelessWidget {
               children: [
                 SvgPicture.asset(
                   "assets/images/registerImage.svg",
-                  height: MediaQuery.of(context).size.height * 0.2,
+                  height: MediaQuery.of(context).size.height * 0.1,
                   width: 100,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.06),
@@ -95,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                     if (state is AuthLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    return CustomButton(
+                    return LoginButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _onLoginPressed(
@@ -110,18 +111,21 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('ليس لديك حساب؟'),
+                     Text('ليس لديك حساب؟',style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 12
+                     ),),
+                     SizedBox(width: MediaQuery.sizeOf(context).width * 0.02),
                     GestureDetector(
                       onTap: () {
-                        context.push('/');
+                        context.push('/verify_phone_number');
                       },
-                      child: const Text(
+                      child:  Text(
                         'انشاء حساب',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppTheme.mainColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontSize: 12
+                     ),
                       ),
                     ),
                   ],

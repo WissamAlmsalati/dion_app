@@ -102,7 +102,7 @@ class LoanDetailScreen extends StatelessWidget {
                         // This widget also refreshes the details on success.
                         UpdateLoanStatusWidget(loan: loan, loanType: loadType),
                         const SizedBox(height: 20),
-                        if (loan.loanStatus == "Approved" && loadType == "Lending")
+                        if (loan.loanStatus == "Approved" && loadType == "Borrowing")
                           BlocBuilder<SettleLoanBloc, SettleLoanState>(
                             builder: (context, settleState) {
                               if (settleState is SettleLoanLoading) {

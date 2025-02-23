@@ -22,6 +22,7 @@ class RouterConfig {
   static const String resetPassPhone = '/reset_pass_phone_screen';
   static const String resetPassOtp = '/reset_pass_otp_screen';
   static const String profile = '/profile_screen';
+  static const String verifyPhoneNumber = '/verify_phone_number';
 
   static const List<String> publicRoutes = [
     login,
@@ -29,6 +30,7 @@ class RouterConfig {
     otp,
     resetPassPhone,
     resetPassOtp,
+    verifyPhoneNumber,
   ];
 
   static final router = GoRouter(
@@ -64,12 +66,16 @@ class RouterConfig {
     ),
     GoRoute(
       path: mainScreen,
-      builder: (context, state) => const MainScreen(),
+      builder: (context, state) =>  MainScreen(),
     ),
     GoRoute(
       path: homeScreen,
       builder: (context, state) => const HomeScreen(),
     ),
+    GoRoute(
+      path: verifyPhoneNumber,
+      builder: (context, state) => VerifyPhoneNumber(),
+      ),
     GoRoute(
       path: otp,
       builder: (context, state) {

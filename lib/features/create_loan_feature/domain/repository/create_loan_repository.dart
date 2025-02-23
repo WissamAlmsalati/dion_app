@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dion_app/core/services/dio_service.dart'; // Adjust the path if needed
+import 'package:flutter/foundation.dart';
 import '../../data/models/loaning_model.dart';
 import '../../../../core/services/auth_token_service.dart';
 
@@ -27,19 +28,29 @@ class CreateLoanRepository {
         ),
       );
 
-      print('Request Body: ${loaningModel.toJson()}');
-      print('Token: $token');
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
+      if (kDebugMode) {
+        print('Request Body: ${loaningModel.toJson()}');
+        print('Token: $token');
+        print('Response Status Code: ${response.statusCode}');
+        print('Response Data: ${response.data}');
+      }
 
       if (response.statusCode != 200) {
-        throw Exception(
-          'Failed to create loan, status code: ${response.statusCode}',
-        );
+        throw 'Failed to create loan, status code: ${response.statusCode}';
       }
     } on DioError catch (e) {
-      print('Dio error: ${e.message}');
-      throw Exception('Failed to create loan due to Dio error: ${e.message}');
+      final errorResponse = e.response?.data;
+      String errorMessage = 'Failed to create loan';
+
+      if (errorResponse is Map<String, dynamic> &&
+          errorResponse.containsKey('message')) {
+        errorMessage = errorResponse['message'];
+      }
+
+      if (kDebugMode) {
+        print('Dio error: $errorMessage');
+      }
+      throw errorMessage;
     }
   }
 }

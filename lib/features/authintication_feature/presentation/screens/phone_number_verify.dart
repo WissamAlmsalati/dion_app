@@ -62,11 +62,18 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
                         color: AppTheme.mainColor,
                         fontWeight: FontWeight.bold,
+                        fontSize: 20,
                         fontFamily: GoogleFonts.tajawal().fontFamily,
                       ),
                     ),
                     Text(
                       "لاستخدام التطبيق يجب عليك اولاانشاء حساب",
+                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: AppTheme.textColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontFamily: GoogleFonts.tajawal().fontFamily,
+                      ),
                       
                     ),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
@@ -111,6 +118,8 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                           return const Center(child: CircularProgressIndicator());
                         }
                         return CustomButton(
+                                                height: MediaQuery.sizeOf(context).height * 0.07,
+
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               final phoneNumber = _phoneController.text;
@@ -128,6 +137,7 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text('لديك حساب؟'),
+                     SizedBox(width: MediaQuery.sizeOf(context).height * 0.01), 
                         GestureDetector(
                           onTap: () {
                             context.push('/login');
@@ -137,6 +147,7 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                             style: TextStyle(
                               color: AppTheme.mainColor,
                               fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
                           ),
                         ),

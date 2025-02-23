@@ -102,26 +102,37 @@ class AuthenticationBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
+Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
+  emit(AuthLoading());
 
-    try {
-      final responseData =
-          await authRepository.login(event.phoneNumber, event.password);
+  try {
+    final responseData = await authRepository.login(
+      event.phoneNumber, 
+      event.password
+    );
 
-      final token = responseData['AuthToken'];
-      final expiresAt = responseData['expiresAt'];
+    final token = responseData['AuthToken'];
+    final expiresAt = responseData['expiresAt'];
 
-      _storage.write(key: 'AuthToken', value: token);
-      await _storage.write(key: 'expires_at', value: expiresAt);
-
-      emit(Authenticated(token: token));
-    } on SocketException {
-      emit(ConnectionError(message: "No internet connection"));
-    } catch (e) {
-      emit(AuthError(message: e.toString()));
+    if (token == null) {
+      emit(AuthError(message: 'Invalid response: missing authentication token'));
+      return;
     }
+
+    await _storage.write(key: 'AuthToken', value: token);
+    if (expiresAt != null) {
+      await _storage.write(key: 'expires_at', value: expiresAt);
+    }
+
+    emit(Authenticated(token: token));
+  } on SocketException {
+    emit(ConnectionError(message: "لا يوجد اتصال بالإنترنت"));
+  } on AuthException catch (e) {
+    emit(AuthError(message: e.message));
+  } catch (e) {
+    emit(AuthError(message: e.toString()));
   }
+}
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     await _storage.delete(key: 'auth_token');

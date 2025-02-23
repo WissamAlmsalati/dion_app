@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final double? height;
   final bool isLoading;
+  final double? fontSize;
 
   const CustomButton({
     super.key,
@@ -19,7 +20,7 @@ class CustomButton extends StatelessWidget {
     this.textColor,
     this.width,
     this.height,
-    this.isLoading = false,
+    this.isLoading = false, this.fontSize,
   });
 
   @override
@@ -48,6 +49,9 @@ class CustomButton extends StatelessWidget {
                         color: textColor ?? Colors.white,
                         fontFamily: GoogleFonts.tajawal().fontFamily,
                         fontWeight: FontWeight.bold,
+                        fontSize:fontSize, 
+
+                        
                       ),
                   textAlign: TextAlign.center,
                 ),

@@ -50,7 +50,7 @@ class UpdateLoanStatusWidget extends StatelessWidget {
 
         // Display Accept/Reject buttons only if the loan is in a "Waiting" state
         // and the bloc is in its initial state.
-        if (loanType == "Borrowing" &&
+        if (loanType == "Lending" &&
             loan.loanStatus == "Waiting" &&
             statusState is LoanStatusInitial) {
           return Row(

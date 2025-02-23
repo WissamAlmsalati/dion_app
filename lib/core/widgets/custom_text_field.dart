@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String labelText;
+  final String labelText; // kept in case you need it for reference but not shown
   final String? hintText;
   final TextInputType keyboardType;
   final IconData? prefixIcon;
@@ -14,7 +14,7 @@ class CustomTextField extends StatelessWidget {
   final Function(String)? onChanged;
   final double? height;
   final double? width;
-  final double? borderRadius;
+  final double? borderRadius; // This will not be used now
   final Widget? suffixIcon;
   final int maxLength;
 
@@ -41,68 +41,66 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            child: TextFormField(
-              inputFormatters: keyboardType == TextInputType.number ||
-                  keyboardType == TextInputType.phone
-                  ? <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ]
-                  : null,
-              controller: controller,
-              obscureText: obscureText,
-              maxLines: maxLines ?? 1,
-              minLines: minLines ?? 1,
-              
-              maxLength: maxLength,
-              decoration: InputDecoration(
-                labelText: labelText,
-                hintText: hintText,
-            
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
-                  borderSide: BorderSide(
-                    color: theme.inputDecorationTheme.enabledBorder?.borderSide.color ??
-                        Colors.grey,
-                  ),
+          TextFormField(
+            inputFormatters: keyboardType == TextInputType.number ||
+                    keyboardType == TextInputType.phone
+                ? <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ]
+                : null,
+            controller: controller,
+            obscureText: obscureText,
+            maxLines: maxLines ?? 1,
+            minLines: minLines ?? 1,
+            maxLength: maxLength,
+            decoration: InputDecoration(
+              // Removed labelText to not show any label
+              hintText: hintText,
+              // Underline style borders
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: theme.inputDecorationTheme.enabledBorder?.borderSide.color ??
+                      Colors.grey,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
-                  borderSide: BorderSide(
-                    color: theme.inputDecorationTheme.focusedBorder?.borderSide.color ??
-                        Colors.blue,
-                    width: 2.0,
-                  ),
-                ),
-                errorBorder: theme.inputDecorationTheme.errorBorder,
-                focusedErrorBorder: theme.inputDecorationTheme.focusedErrorBorder,
-                filled: true,
-                fillColor: theme.inputDecorationTheme.fillColor,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: height ?? 16,
-                  vertical: width ?? 20,
-                ),
-                labelStyle: theme.inputDecorationTheme.labelStyle,
-                hintStyle: theme.inputDecorationTheme.hintStyle,
-                suffixIcon: suffixIcon, // Use the passed suffixIcon for password visibility toggle
-                // Hide the counter under the TextField
-                counterText: '',  // This hides the counter text
               ),
-              keyboardType: keyboardType,
-              validator: validator,
-              onChanged: onChanged,
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: theme.inputDecorationTheme.focusedBorder?.borderSide.color ?? Colors.blue,
+                  width: 2.0,
+                ),
+              ),
+              errorBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: theme.inputDecorationTheme.errorBorder?.borderSide.color ?? Colors.red,
+                ),
+              ),
+              focusedErrorBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: theme.inputDecorationTheme.focusedErrorBorder?.borderSide.color ?? Colors.red,
+                  width: 2.0,
+                ),
+              ),
+              filled: false,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: height ?? 16,
+                vertical: width ?? 20,
+              ),
+              labelStyle: theme.inputDecorationTheme.labelStyle,
+              hintStyle: theme.inputDecorationTheme.hintStyle,
+              suffixIcon: suffixIcon,
+              counterText: '', // This hides the counter text
             ),
+            keyboardType: keyboardType,
+            validator: validator,
+            onChanged: onChanged,
           ),
         ],
       ),
     );
   }
-
- 
 }

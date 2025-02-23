@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:dion_app/core/services/dio_service.dart'; // Adjust the import path as needed (or use service_locator.dart)
+import 'package:dion_app/core/services/dio_service.dart';
 import 'package:dion_app/core/services/api_constants.dart';
   
 class AuthRepository {
@@ -13,7 +13,7 @@ class AuthRepository {
           headers: {'Content-Type': 'application/json'},
         ),
       );
-
+      print("OTP Response Code: ${response.statusCode}");
       if (response.statusCode == 200) {
         return response.data;
       } else {
@@ -52,7 +52,7 @@ class AuthRepository {
     }
   }
 
-  Future<void> signUp(Map<String, dynamic> user) async {
+  Future<Map<String, dynamic>> signUp(Map<String, dynamic> user) async {
     try {
       final Response response = await dioService.dio.post(
         ApiConstants.registerEndpoint,
@@ -65,19 +65,23 @@ class AuthRepository {
       print("SignUp Response Code: ${response.statusCode}");
       print("SignUp Response: ${response.data}");
 
-      if (response.statusCode != 200) {
-        final errorMessage = (response.data is Map && response.data['message'] != null)
-            ? response.data['message']
-            : 'Failed to register';
-        throw AuthException(errorMessage);
+      return response.data;
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw AuthException('انتهت مهلة الاتصال. يرجى التحقق من اتصال الإنترنت الخاص بك');
       }
-    } on DioError catch (e) {
-      throw AuthException('Failed to register: ${e.message}');
+      
+      final message = e.response?.data?['message'] ?? e.message ?? 'حدث خطأ غير متوقع';
+      throw AuthException(message);
+    } catch (e) {
+      print('Unexpected error: $e');
+      throw AuthException('حدث خطأ غير متوقع');
     }
   }
 
   Future<Map<String, dynamic>> login(String phoneNumber, String password) async {
     try {
+      print('Attempting login with phone: $phoneNumber');
       final Response response = await dioService.dio.post(
         ApiConstants.loginEndpoint,
         data: {
@@ -89,15 +93,21 @@ class AuthRepository {
         ),
       );
 
-      print("Login Response Code: ${response.statusCode}");
-      print("Login Response: ${response.data}");
+      print('Login response status: ${response.statusCode}');
+      print('Login response data: ${response.data}');
 
-      if (response.statusCode != 200) {
-        throw AuthException(response.statusMessage ?? 'Login failed');
-      }
       return response.data;
-    } on DioError catch (e) {
-      throw AuthException('Failed to login: ${e.message}');
+    } on DioException catch (e) {
+      print('DioException: ${e.message}');
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw AuthException('انتهت مهلة الاتصال. يرجى التحقق من اتصال الإنترنت الخاص بك');
+      }
+      
+      final message = e.response?.data?['message'] ?? e.message ?? 'حدث خطأ غير متوقع';
+      throw AuthException(message);
+    } catch (e) {
+      print('Unexpected error: $e');
+      throw AuthException('حدث خطأ غير متوقع');
     }
   }
 }
