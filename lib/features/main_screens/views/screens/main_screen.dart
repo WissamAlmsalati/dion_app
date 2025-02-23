@@ -51,61 +51,7 @@ class MainScreen extends StatelessWidget {
                   context.read<NavigationBloc>().add(NavigateToScreen(index));
                 },
               ),
-              bottomNavigationBar: Container(
-               
-                decoration: BoxDecoration(
-                  color: bottomNavTheme.backgroundColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: const Offset(0, -1),
-                    ),
-                  ],
-                ),
-                child: BottomNavigationBar(
-                  currentIndex: currentIndex,
-                  onTap: (index) {
-                    context.read<NavigationBloc>().add(NavigateToScreen(index));
-                  },
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: SvgPicture.asset(
-                        'assets/icons/home.svg',
-                        width: 30,
-                        height: 30,
-                        color: currentIndex == 0
-                            ? bottomNavTheme.selectedItemColor!
-                            : bottomNavTheme.unselectedItemColor!,
-                      ),
-                      label: 'الرئيسية',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: SvgPicture.asset(
-                        'assets/icons/Wallet.svg',
-                        width: 30,
-                        height: 30,
-                        color: currentIndex == 1
-                            ? bottomNavTheme.selectedItemColor!
-                            : bottomNavTheme.unselectedItemColor!,
-                      ),
-                      label: 'إنشاء قرض',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: SvgPicture.asset(
-                        'assets/icons/Chart.svg',
-                        width: 30,
-                        height: 30,
-                        color: currentIndex == 2
-                            ? bottomNavTheme.selectedItemColor!
-                            : bottomNavTheme.unselectedItemColor!,
-                      ),
-                      label: 'القروض',
-                    ),
-                  ],
-                ),
-              ),
+              bottomNavigationBar: CustomNavBar(currentIndex: currentIndex),
             );
           },
         ),
@@ -118,80 +64,103 @@ class MainScreen extends StatelessWidget {
 
 
 
-class CustomBottomNavigationBar extends StatelessWidget {
-  final int currentIndex;
-  final Function(int) onTap;
-  final ThemeData theme;
 
-  const CustomBottomNavigationBar({
+
+
+class CustomNavBar extends StatelessWidget {
+  final int currentIndex;
+  
+  const CustomNavBar({
     Key? key,
     required this.currentIndex,
-    required this.onTap,
-    required this.theme,
   }) : super(key: key);
-
-  // Your provided SVG path data
-  static const String _svgPath = '''
-<svg width="430" height="71" viewBox="0 0 430 71" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M430 17.483V71H-1V17.483C-1 7.83037 11.59 0 27.11 0H136.17C140.22 0 143.92 1.42427 145.73 3.67573L151.17 10.4426C153.84 13.7638 159.3 15.8598 165.27 15.8598H263.73C269.7 15.8598 275.16 13.7638 277.83 10.4426L283.27 3.67573C285.08 1.42427 288.78 0 292.83 0H401.89C417.41 0 430 7.83037 430 17.483Z" fill="white"/>
-</svg>
-''';
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        // SVG Background
-        SvgPicture.string(
-          _svgPath,
-          width: MediaQuery.of(context).size.width,
-          height: 71,
-          fit: BoxFit.fill,
-        ),
-        // Navigation Items
-        BottomNavigationBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          currentIndex: currentIndex,
-          onTap: onTap,
-          items: [
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/home.svg',
-                width: 30,
-                height: 30,
-                color: currentIndex == 0
-                    ? theme.bottomNavigationBarTheme.selectedItemColor
-                    : theme.bottomNavigationBarTheme.unselectedItemColor,
-              ),
-              label: 'الرئيسية',
+    final bottomNavTheme = Theme.of(context).bottomNavigationBarTheme;
+    
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildNavItem(
+            context: context,
+            icon: 'assets/icons/home.svg',
+            label: 'الرئيسية',
+            index: 0,
+            currentIndex: currentIndex,
+            bottomNavTheme: bottomNavTheme,
+          ),
+          _buildNavItem(
+            context: context,
+            icon: 'assets/icons/Wallet.svg',
+            label: 'إنشاء قرض',
+            index: 1,
+            currentIndex: currentIndex,
+            bottomNavTheme: bottomNavTheme,
+          ),
+          _buildNavItem(
+            context: context,
+            icon: 'assets/icons/Chart.svg',
+            label: 'القروض',
+            index: 2,
+            currentIndex: currentIndex,
+            bottomNavTheme: bottomNavTheme,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required BuildContext context,
+    required String icon,
+    required String label,
+    required int index,
+    required int currentIndex,
+    required BottomNavigationBarThemeData bottomNavTheme,
+  }) {
+    final isSelected = currentIndex == index;
+    
+    return InkWell(
+      onTap: () {
+        context.read<NavigationBloc>().add(NavigateToScreen(index));
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            icon,
+            width: 30,
+            height: 30,
+            color: isSelected
+                ? bottomNavTheme.selectedItemColor!
+                : bottomNavTheme.unselectedItemColor!,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? bottomNavTheme.selectedItemColor!
+                  : bottomNavTheme.unselectedItemColor!,
+              fontSize: 12,
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/Wallet.svg',
-                width: 30,
-                height: 30,
-                color: currentIndex == 1
-                    ? theme.bottomNavigationBarTheme.selectedItemColor
-                    : theme.bottomNavigationBarTheme.unselectedItemColor,
-              ),
-              label: 'إنشاء قرض',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/Chart.svg',
-                width: 30,
-                height: 30,
-                color: currentIndex == 2
-                    ? theme.bottomNavigationBarTheme.selectedItemColor
-                    : theme.bottomNavigationBarTheme.unselectedItemColor,
-              ),
-              label: 'القروض',
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }
