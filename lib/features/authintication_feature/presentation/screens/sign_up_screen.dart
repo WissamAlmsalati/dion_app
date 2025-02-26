@@ -1,4 +1,5 @@
 import 'package:dion_app/core/theme/app_theme.dart';
+import 'package:dion_app/features/authintication_feature/presentation/widgets/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,6 +32,8 @@ class SignUpScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => AuthenticationBloc(authRepository: AuthRepository()),
       child: Scaffold(
+        backgroundColor: Color(0xff353F4F),
+
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
@@ -143,7 +146,7 @@ class SignUpScreen extends StatelessWidget {
                         }
                       },
                       builder: (context, state) {
-                        return CustomButton(
+                        return LoginButton(
                           height: MediaQuery.sizeOf(context).height * 0.07,
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
@@ -162,7 +165,6 @@ class SignUpScreen extends StatelessWidget {
                             }
                           },
                           text: state is AuthLoading ? "جاري التسجيل..." : "تسجيل",
-                          isLoading: state is AuthLoading,
                         );
                       },
                     ),

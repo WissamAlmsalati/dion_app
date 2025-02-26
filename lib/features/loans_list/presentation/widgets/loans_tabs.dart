@@ -32,7 +32,6 @@ Widget buildLoanTab(BuildContext context, {required String loanType}) {
               }
             },
           ),
-          // Show a loading dialog during authentication
           BlocListener<AuthenticationBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthLoading) {

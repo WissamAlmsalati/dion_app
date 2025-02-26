@@ -1,7 +1,9 @@
 import 'package:dion_app/core/widgets/custom_button.dart';
 import 'package:dion_app/core/widgets/custom_text_field.dart';
+import 'package:dion_app/features/authintication_feature/presentation/widgets/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async'; // Import for Timer
 
@@ -56,8 +58,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff353F4F),
+
       appBar: AppBar(
-        title: const Text("إعادة تعيين كلمة المرور"),
+        title:  Text("إعادة تعيين كلمة المرور",style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: Colors.white
+        ),),
+        backgroundColor: Color(0xff353F4F),
+
       ),
       body: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
         listener: (context, state) {
@@ -73,12 +81,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           }
         },
         builder: (context, state) {
-          return Center(
+          return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding:   EdgeInsets.only(
+                top: MediaQuery.sizeOf(context).height*0.08,
+                right: MediaQuery.sizeOf(context).width*0.05,
+                left: MediaQuery.sizeOf(context).width*0.05,
+                bottom: MediaQuery.sizeOf(context).height*0.08,
+            
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/registerImage.svg',
+                    height: MediaQuery.sizeOf(context).height * 0.2,
+                  ),
+                  SizedBox(height: MediaQuery.sizeOf(context).height * 0.1),
+            
                   CustomTextField(
                     controller: otpControl,
                     labelText: "رسالة التحقق",
@@ -87,7 +106,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     keyboardType: TextInputType.phone,
                     maxLength: 6,
                   ),
-
+            
                   const SizedBox(height: 16),
                   CustomTextField(
                     controller: passwordControl,
@@ -99,9 +118,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     maxLength: 8,
                   ),
                   const SizedBox(height: 16),
-
+            
                   // Reset Password Button
-                  CustomButton(
+                  LoginButton(
                     onPressed: () {
                       final otp = int.tryParse(otpControl.text.trim()) ?? 0;
                       final newPassword = passwordControl.text.trim();
@@ -116,11 +135,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       }
                     },
                     text: 'إعادة تعيين كلمة المرور',
-                    isLoading: state is ResetPasswordLoading,
                   ),
-
+            
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-
+            
                   // Resend OTP Button with Countdown
                   _resendCountdown > 0
                       ? Text(

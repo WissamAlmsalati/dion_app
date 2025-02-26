@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String labelText; // kept in case you need it for reference but not shown
+  final String labelText;
   final String? hintText;
   final TextInputType keyboardType;
   final IconData? prefixIcon;
@@ -14,12 +15,12 @@ class CustomTextField extends StatelessWidget {
   final Function(String)? onChanged;
   final double? height;
   final double? width;
-  final double? borderRadius; // This will not be used now
+  final double? borderRadius;
   final Widget? suffixIcon;
   final int maxLength;
 
   const CustomTextField({
-    super.key,
+    Key? key,
     required this.controller,
     required this.labelText,
     this.hintText,
@@ -35,72 +36,82 @@ class CustomTextField extends StatelessWidget {
     this.borderRadius,
     this.suffixIcon,
     required this.maxLength,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 9.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextFormField(
-            inputFormatters: keyboardType == TextInputType.number ||
-                    keyboardType == TextInputType.phone
-                ? <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly,
-                  ]
-                : null,
-            controller: controller,
-            obscureText: obscureText,
-            maxLines: maxLines ?? 1,
-            minLines: minLines ?? 1,
-            maxLength: maxLength,
-            decoration: InputDecoration(
-              // Removed labelText to not show any label
-              hintText: hintText,
-              // Underline style borders
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: theme.inputDecorationTheme.enabledBorder?.borderSide.color ??
-                      Colors.grey,
-                ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start, // Align to top so error text doesn't shift layout
+      children: [
+        // Label on the left
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 12.0), // Reduced padding for height
+            child: Text(
+              labelText,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.white
               ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: theme.inputDecorationTheme.focusedBorder?.borderSide.color ?? Colors.blue,
-                  width: 2.0,
-                ),
-              ),
-              errorBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: theme.inputDecorationTheme.errorBorder?.borderSide.color ?? Colors.red,
-                ),
-              ),
-              focusedErrorBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: theme.inputDecorationTheme.focusedErrorBorder?.borderSide.color ?? Colors.red,
-                  width: 2.0,
-                ),
-              ),
-              filled: false,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: height ?? 16,
-                vertical: width ?? 20,
-              ),
-              labelStyle: theme.inputDecorationTheme.labelStyle,
-              hintStyle: theme.inputDecorationTheme.hintStyle,
-              suffixIcon: suffixIcon,
-              counterText: '', // This hides the counter text
             ),
-            keyboardType: keyboardType,
-            validator: validator,
-            onChanged: onChanged,
           ),
-        ],
-      ),
+        ),
+        // Text field and error on the right
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Text field with SVG background
+              Stack(
+                children: [
+                  // SVG background
+                  Positioned.fill(
+                    child: SvgPicture.asset(
+                      "assets/images/tfBackground.svg",
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  // TextFormField with no border
+                  TextFormField(
+                    inputFormatters: keyboardType == TextInputType.number ||
+                        keyboardType == TextInputType.phone
+                        ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+                        : null,
+                    controller: controller,
+                    obscureText: obscureText,
+                    maxLines: maxLines ?? 1,
+                    minLines: minLines ?? 1,
+                    maxLength: maxLength,
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      filled: false,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: width ?? 16,
+                        vertical: height ?? 12, // Reduced height here
+                      ),
+                      labelStyle: theme.inputDecorationTheme.labelStyle,
+                      hintStyle: theme.inputDecorationTheme.hintStyle,
+                      suffixIcon: suffixIcon,
+                      counterText: '', // Hide character counter
+                    ),
+                    keyboardType: keyboardType,
+                    validator: validator,
+                    onChanged: (value) {
+                      if (onChanged != null) onChanged!(value); // Trigger onChanged callback
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

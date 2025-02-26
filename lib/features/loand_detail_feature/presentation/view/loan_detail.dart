@@ -45,8 +45,10 @@ class LoanDetailScreen extends StatelessWidget {
         ),
       ],
       child: Scaffold(
+        backgroundColor: Color(0xff353F4F),
         appBar: AppBar(
-          title: const Text('تفاصيل القرض', style: TextStyle(color: Colors.black)),
+          backgroundColor: Color(0xff353F4F),
+          title: const Text('تفاصيل القرض', style: TextStyle(color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
@@ -98,6 +100,8 @@ class LoanDetailScreen extends StatelessWidget {
                         ),
                         buildDetailItem('حالة القرض', loanStatusText),
                         buildDetailItem("نوع القرض", loadType),
+                        buildDetailItem('الملاحظات', loan.notes ?? 'غير متوفر'),
+
                         const SizedBox(height: 20),
                         // This widget also refreshes the details on success.
                         UpdateLoanStatusWidget(loan: loan, loanType: loadType),
@@ -166,13 +170,13 @@ class LoanDetailScreen extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500 , color: Colors.white),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff42FFF9)),
             ),
           ),
         ],

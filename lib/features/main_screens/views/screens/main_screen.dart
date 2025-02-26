@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import '../../../home_screen/presentation/screens/home_page.dart';
 import '../../../home_screen/presentation/screens/home_screen.dart';
 import '../../../create_loan_feature/presentation/views/loaning_screen.dart';
 import '../../../loans_list/presentation/views/loans_screen.dart';
@@ -18,6 +19,7 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomNavTheme = Theme.of(context).bottomNavigationBarTheme;
 
     return BlocProvider<NavigationBloc>(
       create: (context) => getIt<NavigationBloc>(),
@@ -39,21 +41,35 @@ class MainScreen extends StatelessWidget {
             }
             return Scaffold(
               backgroundColor: Colors.white,
-              body: PageView(
-                controller: _pageController,
+              body: Stack(
                 children: [
-                  
-                   const LoanListScreen(),
-                   const HomeScreen(),
-                  LoaningScreen(),
-                 
+                  PageView(
+                    controller: _pageController,
+                    children: [
+                      const HomePage(),
+                      LoaningScreen(),
+                      const LoanListScreen(),
+                    ],
+                    onPageChanged: (index) {
+                      context.read<NavigationBloc>().add(NavigateToScreen(index));
+                    },
+                  ),
+                  Positioned(
+                    bottom: -50, // تأكد أن الصورة في الأسفل تمامًا
+                    left: 0,
+                    right: 0,
+                    child: SvgPicture.asset(
+
+                      "assets/images/decoration.svg",
+                      color: Colors.white,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ],
-                onPageChanged: (index) {
-                  context.read<NavigationBloc>().add(NavigateToScreen(index));
-                },
               ),
               bottomNavigationBar: CustomNavBar(currentIndex: currentIndex),
             );
+
           },
         ),
       ),
@@ -81,50 +97,38 @@ class CustomNavBar extends StatelessWidget {
     final bottomNavTheme = Theme.of(context).bottomNavigationBarTheme;
     
     return Container(
-      height: 90,
-      child: Stack(
-        fit: StackFit.expand,
+
+      height: MediaQuery.sizeOf(context).height *0.1,
+      decoration: BoxDecoration(
+        color: Colors.white,
+
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/images/buttom_nav_bar.svg',
-              fit: BoxFit.fill,
-              width: double.infinity,
-            ),
+          _buildNavItem(
+            context: context,
+            icon: 'assets/icons/home.svg',
+            label: 'الرئيسية',
+            index: 0,
+            currentIndex: currentIndex,
+            bottomNavTheme: bottomNavTheme,
           ),
-          Container(
-            color: Colors.white.withOpacity(0.1),
+          _buildNavItem(
+            context: context,
+            icon: 'assets/icons/Wallet.svg',
+            label: 'إنشاء قرض',
+            index: 1,
+            currentIndex: currentIndex,
+            bottomNavTheme: bottomNavTheme,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-         
-               _buildNavItem(
-                context: context,
-                icon: 'assets/icons/Chart.svg',
-                label: 'القروض',
-                index: 0,
-                currentIndex: currentIndex,
-                bottomNavTheme: bottomNavTheme,
-              ),
-                   _buildNavItem(
-                context: context,
-                icon: 'assets/icons/home.svg',
-                label: 'الرئيسية',
-                index: 1,
-                currentIndex: currentIndex,
-                bottomNavTheme: bottomNavTheme,
-              ),
-              _buildNavItem(
-                context: context,
-                icon: 'assets/icons/Wallet.svg',
-                label: 'إنشاء قرض',
-                index: 2,
-                currentIndex: currentIndex,
-                bottomNavTheme: bottomNavTheme,
-              ),
-             
-            ],
+          _buildNavItem(
+            context: context,
+            icon: 'assets/icons/Chart.svg',
+            label: 'القروض',
+            index: 2,
+            currentIndex: currentIndex,
+            bottomNavTheme: bottomNavTheme,
           ),
         ],
       ),

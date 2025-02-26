@@ -133,11 +133,9 @@ class LoanList extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
+    return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: loans.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final loan = loans[index];
         return LoanListItem(

@@ -22,10 +22,15 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff353F4F),
       appBar: AppBar(
-        title: const Text(
+        backgroundColor: Color(0xff353F4F),
+        title: Text(
           'تسجيل الدخول',
-          style: TextStyle(fontSize: 24),
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(color: Colors.white),
         ),
       ),
       body: BlocListener<AuthenticationBloc, AuthState>(
@@ -50,7 +55,13 @@ class LoginScreen extends StatelessWidget {
           }
         },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding:  EdgeInsets.only(
+            top: MediaQuery.sizeOf(context).height*0.08,
+                right: MediaQuery.sizeOf(context).width*0.05,
+              left: MediaQuery.sizeOf(context).width*0.05,
+              bottom: MediaQuery.sizeOf(context).height*0.08,
+
+          ),
           child: Form(
             key: _formKey,
             child: Column(
@@ -58,8 +69,10 @@ class LoginScreen extends StatelessWidget {
                 SvgPicture.asset(
                   "assets/images/registerImage.svg",
                   height: MediaQuery.of(context).size.height * 0.1,
-                  width: 100,
                 ),
+                Text("Dion App", style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: Colors.white
+                ),),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.06),
                 CustomTextField(
                   controller: _phoneController,
@@ -111,21 +124,25 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text('ليس لديك حساب؟',style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 12
-                     ),),
-                     SizedBox(width: MediaQuery.sizeOf(context).width * 0.02),
+                    Text(
+                      'ليس لديك حساب؟',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontSize: 12, color: Colors.white),
+                    ),
+                    SizedBox(width: MediaQuery.sizeOf(context).width * 0.02),
                     GestureDetector(
                       onTap: () {
                         context.push('/verify_phone_number');
                       },
-                      child:  Text(
+                      child: Text(
                         'انشاء حساب',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.mainColor,
-                      fontSize: 12
-                     ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: AppTheme.mainColor, fontSize: 12),
                       ),
                     ),
                   ],
@@ -146,7 +163,8 @@ class LoginScreen extends StatelessWidget {
       return 'رقم الهاتف يجب أن يبدأ ب 91 أو 92 أو 93 أو 94 ويجب أن يتكون من 9 أرقام';
     }
     return null;
-  }   
+  }
+
   void _onLoginPressed(
     BuildContext context,
     TextEditingController phoneController,

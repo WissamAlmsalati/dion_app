@@ -4,7 +4,6 @@ import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_cu
 import 'package:dion_app/features/profile_feature/presentatioon/cubit/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             context.push("/profile_screen");
           },
-          icon: const Icon(Icons.person, color: AppTheme.textColor),
+          icon: Icon(Icons.person, color: AppTheme.textColor),
         ),
       ),
       body: MultiBlocListener(
@@ -79,210 +78,109 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Optionally, refresh the profile data as well.
                   context.read<ProfileCubit>().fetchProfileData();
                 },
-                   child: Stack(
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
                   children: [
-                    
-                     Positioned(
-                      bottom: 140, // This positions the widget at the bottom
-                      left: 0,
-                      right: 0,
-                      child: Stack(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.13,
-                            child: SvgPicture.asset(
-                              fit: BoxFit.fill,
-                              'assets/images/buttom_nav_bar.svg',
-                              color: const Color(0xff353F4F),
+                          // Display the username or loading indicator using ProfileCubit.
+                          BlocBuilder<ProfileCubit, ProfileState>(
+                            builder: (context, profileState) {
+                              if (profileState is ProfileLoading) {
+                                return Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                            AppTheme.textColor),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'تحميل...',
+                                      style: TextStyle(
+                                        color: AppTheme.textColor,
+                                        fontSize: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.fontSize ??
+                                            24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else if (profileState is ProfileLoaded) {
+                                final username = profileState.profile.username;
+                                return Text(
+                                  'أهلا ${username.isNotEmpty ? username : "المستخدم"}',
+                                  style: TextStyle(
+                                    color: AppTheme.textColor,
+                                    fontSize: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.fontSize ??
+                                        24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              } else if (profileState is ProfileError) {
+                                return Text(
+                                  'Error: ${profileState.message}',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              } else {
+                                return Text(
+                                  'أهلا المستخدم',
+                                  style: TextStyle(
+                                    color: AppTheme.textColor,
+                                    fontSize: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.fontSize ??
+                                        24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'الديون المستحقة',
+                            style: TextStyle(
+                              color: AppTheme.textColor,
+                              fontSize: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.fontSize ??
+                                  18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const Positioned(
-                            top: 18,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text("Take",style: TextStyle(
-                                  fontSize: 40,
-                                  color: Color(0xffF2F2F2),
-                                ),),
-                                SizedBox(
-                                  width: 100,
-                                ),
-                                Text("Give",style: TextStyle(
-                                  fontSize: 40,
-                                  color: Color(0xffF2F2F2),
-                                )) ,
-                              ],
-                            ),
-                          )
                         ],
                       ),
                     ),
-                     Positioned(
-                      bottom: 60, // This positions the widget at the bottom
-                      left: 0,
-                      right: 0,
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.13,
-                            child: SvgPicture.asset(
-                              fit: BoxFit.fill,
-                              'assets/images/buttom_nav_bar.svg',
-                              color: const Color(0xff455B7D),
-                            ),
-                          ),
-                          const Positioned(
-                            top: 18,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text("Take",style: TextStyle(
-                                  fontSize: 40,
-                                  color: Color(0xffF2F2F2),
-                                ),),
-                                SizedBox(
-                                  width: 100,
-                                ),
-                                Text("Give",style: TextStyle(
-                                  fontSize: 40,
-                                  color: Color(0xffF2F2F2),
-                                )) ,
-                              ],
-                            ),
-                          )
-                          
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -20, // This positions the widget at the bottom
-                      left: 0,
-                      right: 0,
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.13,
-                            child: SvgPicture.asset(
-                              fit: BoxFit.fill,
-                              'assets/images/buttom_nav_bar.svg',
-                              color: const Color(0xff5678B0),
-                            ),
-                          ),
-                        ],
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    Center(
+                      child: CardWidget(
+                        state: state.loaningData,
                       ),
                     ),
                   ],
-                )
-                
-                
-                // ListView(
-                //   physics: const AlwaysScrollableScrollPhysics(),
-                //   padding: EdgeInsets.zero,
-                //   children: [
-                //     Padding(
-                //       padding: const EdgeInsets.symmetric(
-                //           horizontal: 16, vertical: 16),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           // Display the username or loading indicator using ProfileCubit.
-                //           BlocBuilder<ProfileCubit, ProfileState>(
-                //             builder: (context, profileState) {
-                //               if (profileState is ProfileLoading) {
-                //                 return Row(
-                //                   children: [
-                //                     SizedBox(
-                //                       width: 24,
-                //                       height: 24,
-                //                       child: CircularProgressIndicator(
-                //                         strokeWidth: 2,
-                //                         valueColor: AlwaysStoppedAnimation<Color>(
-                //                             AppTheme.textColor),
-                //                       ),
-                //                     ),
-                //                     const SizedBox(width: 8),
-                //                     Text(
-                //                       'تحميل...',
-                //                       style: TextStyle(
-                //                         color: AppTheme.textColor,
-                //                         fontSize: Theme.of(context)
-                //                                 .textTheme
-                //                                 .titleLarge
-                //                                 ?.fontSize ??
-                //                             24,
-                //                         fontWeight: FontWeight.bold,
-                //                       ),
-                //                     ),
-                //                   ],
-                //                 );
-                //               } else if (profileState is ProfileLoaded) {
-                //                 final username = profileState.profile.username;
-                //                 return Text(
-                //                   'أهلا ${username.isNotEmpty ? username : "المستخدم"}',
-                //                   style: TextStyle(
-                //                     color: AppTheme.textColor,
-                //                     fontSize: Theme.of(context)
-                //                             .textTheme
-                //                             .titleLarge
-                //                             ?.fontSize ??
-                //                         24,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 );
-                //               } else if (profileState is ProfileError) {
-                //                 return Text(
-                //                   'Error: ${profileState.message}',
-                //                   style: const TextStyle(
-                //                     color: Colors.red,
-                //                     fontSize: 24,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 );
-                //               } else {
-                //                 return Text(
-                //                   'أهلا المستخدم',
-                //                   style: TextStyle(
-                //                     color: AppTheme.textColor,
-                //                     fontSize: Theme.of(context)
-                //                             .textTheme
-                //                             .titleLarge
-                //                             ?.fontSize ??
-                //                         24,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 );
-                //               }
-                //             },
-                //           ),
-                //           const SizedBox(height: 8),
-                //           Text(
-                //             'الديون المستحقة',
-                //             style: TextStyle(
-                //               color: AppTheme.textColor,
-                //               fontSize: Theme.of(context)
-                //                       .textTheme
-                //                       .titleSmall
-                //                       ?.fontSize ??
-                //                   18,
-                //               fontWeight: FontWeight.bold,
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                //     Center(
-                //       child: CardWidget(
-                //         state: state.loaningData,
-                //       ),
-                //     ),
-                //   ],
-                // ),
+                ),
               );
             } else {
               return const SizedBox();

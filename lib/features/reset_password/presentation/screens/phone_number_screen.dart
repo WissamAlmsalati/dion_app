@@ -1,5 +1,6 @@
 import 'package:dion_app/core/widgets/custom_button.dart';
 import 'package:dion_app/core/widgets/custom_text_field.dart';
+import 'package:dion_app/features/authintication_feature/presentation/widgets/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dion_app/features/reset_password/presentation/cubit/reset_password_bloc.dart';
@@ -16,8 +17,14 @@ class PhoneNumberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff353F4F),
+
       appBar: AppBar(
-        title: const Text('إعادة تعيين كلمة المرور'),
+        backgroundColor: Color(0xff353F4F),
+
+        title:  Text('إعادة تعيين كلمة المرور',style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: Colors.white
+        ),),
       ),
       body: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
         builder: (context, state) {
@@ -56,7 +63,7 @@ class PhoneNumberScreen extends StatelessWidget {
                       ),
                       
 
-                      CustomButton(
+                      LoginButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             final phoneNumber = _phoneController.text.trim();

@@ -12,67 +12,88 @@ class LoanListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 1,
-      color: setColorByType(loan.loanStatus, Colors.white),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: CircleAvatar(
-          backgroundColor: Colors.blueGrey.shade100,
-          child: Icon(
-            Icons.monetization_on,
-            color: Colors.blueGrey.shade800,
-          ),
-        ),
-        title: Text(
-          loan.deptName,
-          style: GoogleFonts.roboto(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: Colors.blueGrey.shade900,
-          ),
-        ),
-        subtitle: Text(
-          'القيمة: ${loan.amount.toStringAsFixed(2)} د.ل',
-          style: GoogleFonts.roboto(
-            fontSize: 14,
-            color: Colors.blueGrey.shade700,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.blueGrey.shade700,
-        ),
-        onTap: () async {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoanDetailScreen(
-                loanId: loan.id,
-                loadType: loadType,
-              ),
+    return GestureDetector(
+      onTap: () async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoanDetailScreen(
+              loanId: loan.id,
+              loadType: loadType,
             ),
-          );
-        },
+          ),
+        );
+      },
+      child: Container(
+        height: MediaQuery.sizeOf(context).height * 0.1,
+        decoration: BoxDecoration(
+          color: Color(0xff353F4F), // You can change the color if needed
+          // Apply border only on top
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.white, // Set the color of the border
+              width: 1, // Set the width of the border
+            ),
+
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Leading Icon
+              CircleAvatar(
+                backgroundColor: Colors.blueGrey.shade100,
+                child: Icon(
+                  Icons.monetization_on,
+                  color: Colors.blueGrey.shade800,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 10, right: 10),
+                width: 1,
+                color: Colors.white,
+              ),
+              SizedBox(width: 12), // Spacing between the icon and text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title Text
+                    Text(
+                      loan.deptName,
+                      style:Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white
+                      )
+                    ),
+                    SizedBox(height: 4), // Space between title and subtitle
+                    // Subtitle Text
+                    Text(
+                      'القيمة: ${loan.amount.toStringAsFixed(2)} د.ل',
+                      style:Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white
+                    )
+                    ),
+                  ],
+                ),
+              ),
+
+
+              Container(
+                margin: EdgeInsets.only(left: 10, right: 10),
+                width: 1,
+                color: Colors.white,
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.white,
+              ),
+            ],
+          ),
+        ),
       ),
     );
-  }
-
-  Color setColorByType(String loanStatus, Color defaultColor) {
-    switch (loanStatus) {
-      case 'Approved':
-        return Colors.yellow.shade100;
-      case 'Rejected':
-        return Colors.red.shade100;
-      case 'Settled':
-        return Colors.green.shade100;
-      default:
-        return defaultColor;
-    }
   }
 }

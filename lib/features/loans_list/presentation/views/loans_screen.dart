@@ -18,11 +18,14 @@ class LoanListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Two tabs: Borrowing and Lending
+      length: 2,
       child: Scaffold(
+        backgroundColor: Color(0xff353F4F),
         appBar: AppBar(
+          backgroundColor: Color(0xff353F4F),
+
           automaticallyImplyLeading: false,
-          title: const Text('الديون'),
+          title:  Text('الديون',style: TextStyle(color: Colors.white),),
           centerTitle: true,
           bottom:  TabBar(
               labelStyle: GoogleFonts.tajawal(

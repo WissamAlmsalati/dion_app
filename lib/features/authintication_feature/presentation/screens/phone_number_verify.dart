@@ -1,4 +1,5 @@
 import 'package:dion_app/core/theme/app_theme.dart';
+import 'package:dion_app/features/authintication_feature/presentation/widgets/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,7 +45,18 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
 
         },
         child: Scaffold(
-          body: SafeArea(
+          backgroundColor: Color(0xff353F4F),
+          appBar: AppBar(
+            backgroundColor: Color(0xff353F4F),
+            title: Text(
+              'انشاء حساب',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: Colors.white),
+            ),
+          ),
+          body: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(
                 left: MediaQuery.sizeOf(context).height * 0.04,
@@ -57,25 +69,8 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
-                    Text(
-                      "انشاء حساب",
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: AppTheme.mainColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        fontFamily: GoogleFonts.tajawal().fontFamily,
-                      ),
-                    ),
-                    Text(
-                      "لاستخدام التطبيق يجب عليك اولاانشاء حساب",
-                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: AppTheme.textColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: GoogleFonts.tajawal().fontFamily,
-                      ),
-                      
-                    ),
+            
+            
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.04),
                     SvgPicture.asset(
                       "assets/images/registerImage.svg",
@@ -83,10 +78,9 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                       width: 100,
                     ),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.08),
-                    CustomPhoneTextField(
-                      focusNode: _focusNode, // Pass the FocusNode here
+                    CustomTextField(
                       validator: _validatePhoneNumber,
-                      controller: _phoneController,
+                      controller: _phoneController, labelText: "رقم الهاتف", maxLength: 9,
                     ),
                      SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
                     // Using BlocConsumer to listen and build
@@ -117,9 +111,9 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                         if (state is AuthLoading) {
                           return const Center(child: CircularProgressIndicator());
                         }
-                        return CustomButton(
+                        return LoginButton(
                                                 height: MediaQuery.sizeOf(context).height * 0.07,
-
+            
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               final phoneNumber = _phoneController.text;
@@ -136,8 +130,10 @@ class _VerifyPhoneNumberState extends State<VerifyPhoneNumber> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('لديك حساب؟'),
-                     SizedBox(width: MediaQuery.sizeOf(context).height * 0.01), 
+                         Text('لديك حساب؟',style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                           color: Colors.white
+                         ),),
+                     SizedBox(width: MediaQuery.sizeOf(context).height * 0.01),
                         GestureDetector(
                           onTap: () {
                             context.push('/login');
